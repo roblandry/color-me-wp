@@ -71,6 +71,68 @@ add_action( 'twentytwelve_credits', 'ttc_twentytwelve_credits');
 
 
 #--------------------------------------------------------------
+# Infinite Scroll JS
+# Since: 0.1.0
+# A function to enqueue the infinite scroll js
+#--------------------------------------------------------------
+$options = get_option( 'ttc_theme_options' );
+function custom_theme_js(){
+	wp_register_script( 'infinite_scroll',  get_stylesheet_directory_uri() . '/js/jquery.infinitescroll.min.js', array('jquery'),null,true );
+	if( ! is_singular() ) {
+		wp_enqueue_script('infinite_scroll');
+	}
+}
+if (!empty($options['i_s_onoff']) && $options['i_s_onoff'] == 'TRUE')
+	add_action('wp_enqueue_scripts', 'custom_theme_js');
+
+
+#--------------------------------------------------------------
+# Custom Infinite Scroll JS
+# Since: 0.1.0
+# A function to add infinite scroll js to the footer
+#--------------------------------------------------------------
+function custom_infinite_scroll_js() {
+	if( ! is_singular() ) { 
+	$options = get_option( 'ttc_theme_options' );
+	/*img:"http://test.landry.me/wp-content/plugins/infinite-scroll/ajax-loader.gif",
+	msgText:"<em>Loading the next set of posts...</em>",
+	finishedMsg:"<em>Congratulations, you've reached the end of the internet.</em>"*/
+	$i_s_img = get_stylesheet_directory_uri().'/images/ajax-loader.gif';
+	$i_s_msgText = $options['i_s_msgText'];
+	$i_s_finishedMsg = $options['i_s_finishedMsg'];
+	$i_s_functions = $options['i_s_functions'];
+?>
+		<script type="text/javascript">
+			function infinite_scroll_callback(newElements,data){<?php echo $i_s_functions; ?>}
+			jQuery(document).ready(function($){
+				$("#content").infinitescroll({
+					debug:false,
+					loading:{
+						img:"<?php echo $i_s_img; ?>",
+						msgText:"<?php echo $i_s_msgText; ?>",
+						finishedMsg:"<?php echo $i_s_finishedMsg; ?>"
+					},
+					state:{currPage:"1"},
+					behavior:"undefined",
+					nextSelector:"#nav-below .nav-previous a:first",
+					navSelector:"#nav-below",
+					contentSelector:"#content",
+					itemSelector:"#content article.post"
+				},
+				function(newElements,data){
+					window.setTimeout(
+						function(){infinite_scroll_callback(newElements,data)}
+					,1);
+				});
+			});
+		</script><?php
+	}
+}
+if (!empty($options['i_s_onoff']) && $options['i_s_onoff'] == 'TRUE')
+	add_action( 'wp_footer', 'custom_infinite_scroll_js',100 );
+
+
+#--------------------------------------------------------------
 # Wp Head
 # Since: 0.1.0
 # A function to add the styles to the wp_head

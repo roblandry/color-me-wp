@@ -55,6 +55,7 @@ function ttc_admin_head() {
 	global $fields_dark;
 	global $fields_light;
 	$options = get_option( 'ttc_theme_options' );
+
 	if ($options['color-scheme'] == 'dark') {
 		$fields = $fields_dark;
 		foreach ($fields as $field => $value) {
@@ -119,7 +120,7 @@ function theme_options_do_page() {
 	<?php screen_icon(); echo "<h2>". __( 'Custom Theme Options', 'ttc_theme' ) . "</h2><br>"; ?>
 
 	<?php if ( false !== $_REQUEST['settings-updated'] ) : ?>
-	<div class="updated fade"><p><strong><?php _e( 'Options saved', 'ttc_theme' ); ?></strong></p></div>
+	<div class="updated fade"><p><strong><?php _e( 'Options saved', 'ttc_theme' ); ?></strong></p></div><br>
 	<?php endif; ?> 
 
 	<div id=wrap>
@@ -159,6 +160,10 @@ function theme_options_do_page() {
 	} else {
 		$options['color-scheme'] = 'dark';
 		$options_disabled = 'disabled';
+		$options['i_s_onoff'] = 'FALSE';
+		$options['i_s_msgText'] = __( '<em>Loading the next set of posts...</em>', 'ttc_theme' );
+		$options['i_s_finishedMsg'] = __( '<em>All posts loaded.</em>', 'ttc_theme' );
+		$options['i_s_functions'] = '';
 	}
 
 	?> 
@@ -201,45 +206,51 @@ function theme_options_do_page() {
 
 	</tbody>
 	<tfoot><tr><th colspan='2'></th></tr></tfoot>
-	</table> 
+	</table><br>
 
+		<!-- Infinite Scroll Settings -->
+		<table class=widefat cellspacing=5>
+			<thead><tr><th valign=top colspan=2><?php _e( 'Infinite Scroll Settings', 'ttc_theme' ); ?></th></tr></thead>
+
+			<!-- On/Off -->
+			<tr><td><strong><?php _e( 'On or Off', 'ttc_theme' ); ?></strong></td>
+			<td>
+			<select name="ttc_theme_options[i_s_onoff]">
+			<?php
+				$i_s_on = $i_s_off = '';
+				if ($options['i_s_onoff'] == 'TRUE') $i_s_on = 'selected';
+				if ($options['i_s_onoff'] == 'FALSE') $i_s_off = 'selected';
+
+			?>
+			<option value='TRUE' <?php echo $i_s_on; ?>><?php _e('On', 'ttc_theme'); ?></option>
+			<option value='FALSE' <?php echo $i_s_off; ?>><?php _e('Off', 'ttc_theme'); ?></option>
+			</select>
+			</td></tr>
+
+			<!-- Loading Message -->
+			<tr>
+			<td colspan=2><strong><?php _e( 'Loading Message', 'ttc_theme' ); ?></strong></td></tr>
+			<td colspan=2><textarea name="ttc_theme_options[i_s_msgText]" cols='65' rows='1'><?php echo $options['i_s_msgText']; ?></textarea></td>
+			</tr>
+
+			<!-- Finished Message -->
+			<tr>
+			<td colspan=2><strong><?php _e( 'Finished Message', 'ttc_theme' ); ?></strong></td></tr>
+			<td colspan=2><textarea name="ttc_theme_options[i_s_finishedMsg]" cols='65' rows='1'><?php echo $options['i_s_finishedMsg']; ?></textarea></td>
+			</tr>
+
+			<!-- Functions -->
+			<tr>
+			<td colspan=2><strong><?php _e( 'Functions to Load', 'ttc_theme' ); ?></strong> - <a href='http://www.infinite-scroll.com/lightbox-compatibility-code/' target='_blank'><?php _e( 'Known Functions', 'ttc_theme' ); ?></a></td></tr>
+			<td colspan=2><textarea name="ttc_theme_options[i_s_functions]" cols='65' rows='3'><?php echo $options['i_s_functions']; ?></textarea></td>
+			</tr>
+
+			<tfoot><tr><th colspan=2></th></tr></tfoot>
+		</table><br>
 	<p>
 	<input type="submit" value="<?php _e( 'Save Options', 'ttc_theme' ); ?>" />
 	</p>
-	</form><br>
-
-		<!-- RSS -->
-		<table class=widefat cellspacing=5>
-			<thead><tr><th valign=top >News</th></tr></thead>
-			<?php 
-			$rss = fetch_feed('http://redmine.landry.me/projects/twenty-twelve-custom/news.atom');
-			$out = '';
-			if (!is_wp_error( $rss ) ) {
-				$maxitems = $rss->get_item_quantity(50);     
-				$rss_items = $rss->get_items(0, $maxitems);  
-
-				if ($maxitems == 0) {
-					$out = "<tr><td>Nothing to see here.</td></tr>";     
-				} else {     
-
-					foreach ( $rss_items as $item ) {
-
-						$title = $item->get_title();
-						$content = $item->get_content();
-						$description = $item->get_description();
-						$author = $item->get_author();
-						$author = $author->get_name();
-
-						$out .= "<tr><td>";
-						$out .= "<a target='_BLANK' href='". $item->get_permalink() ."'  title='Posted ". $item->get_date('j F Y | g:i a') ."'>";
-				       		$out .= "$title</a> $description";
-						$out .= "</td></tr>";
-					} 
-				}
-			} else {$out = "<tr><td>Nothing to see here.</td></tr>";}
-		echo $out; ?>
-			<tfoot><tr><th></th></tr></tfoot>
-		</table>
+	</form>
 
 	</div> <!-- End Left -->
 	<div id=right>
@@ -283,6 +294,40 @@ function theme_options_do_page() {
 
 			</article>
 		</div> <!-- End site-content -->
+		<br>
+
+		<!-- RSS -->
+		<table class=widefat cellspacing=5 style="margin:0 15px;width:94%">
+			<thead><tr><th valign=top ><?php _e( 'News', 'ttc_theme' ); ?></th></tr></thead>
+			<?php 
+			$rss = fetch_feed('http://redmine.landry.me/projects/twenty-twelve-custom/news.atom');
+			$out = '';
+			if (!is_wp_error( $rss ) ) {
+				$maxitems = $rss->get_item_quantity(50);     
+				$rss_items = $rss->get_items(0, $maxitems);  
+
+				if ($maxitems == 0) {
+					$out = "<tr><td>Nothing to see here.</td></tr>";     
+				} else {     
+
+					foreach ( $rss_items as $item ) {
+
+						$title = $item->get_title();
+						$content = $item->get_content();
+						$description = $item->get_description();
+						$author = $item->get_author();
+						$author = $author->get_name();
+
+						$out .= "<tr><td>";
+						$out .= "<a target='_BLANK' href='". $item->get_permalink() ."'  title='Posted ". $item->get_date('j F Y | g:i a') ."'>";
+				       		$out .= "$title</a> $description";
+						$out .= "</td></tr>";
+					} 
+				}
+			} else {$out = "<tr><td>Nothing to see here.</td></tr>";}
+		echo $out; ?>
+			<tfoot><tr><th></th></tr></tfoot>
+		</table>
 	</div> <!-- End Right -->
 	</div> <!-- End Wrap -->
 <?php } ?>
