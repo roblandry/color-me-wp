@@ -125,7 +125,10 @@ function custom_infinite_scroll_js() {
 					,1);
 				});
 			});
-		</script><?php
+		</script>
+		<style type="text/css">
+			#infscr-loading { text-align: center; }
+		</style><?php
 	}
 }
 if (!empty($options['i_s_onoff']) && $options['i_s_onoff'] == 'TRUE')
