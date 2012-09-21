@@ -165,8 +165,6 @@ function theme_options_do_page() {
 	<table class="widefat clear" cellspacing='5'>
 	<thead><tr><th colspan=2><?php _e( 'Color Options', 'ttc_theme' ); ?></th></tr></thead>
 	<tbody>
-		<tr valign="top"><td colspan=2><?php @readfile("http://redmine.landry.me/projects/twentyeleven-child/news.atom"); ?></td></tr>
-
 		<tr valign="top"><td><?php _e( 'Color Scheme', 'ttc_theme' ); ?></td>
 		<td>
 		<select name="ttc_theme_options[color-scheme]">
@@ -208,7 +206,41 @@ function theme_options_do_page() {
 	<p>
 	<input type="submit" value="<?php _e( 'Save Options', 'ttc_theme' ); ?>" />
 	</p>
-	</form>
+	</form><br>
+
+		<!-- RSS -->
+		<table class=widefat cellspacing=5>
+			<thead><tr><th valign=top >News</th></tr></thead>
+			<?php 
+			$rss = fetch_feed('http://redmine.landry.me/projects/twenty-twelve-custom/news.atom');
+			$out = '';
+			if (!is_wp_error( $rss ) ) {
+				$maxitems = $rss->get_item_quantity(50);     
+				$rss_items = $rss->get_items(0, $maxitems);  
+
+				if ($maxitems == 0) {
+					$out = "<tr><td>Nothing to see here.</td></tr>";     
+				} else {     
+
+					foreach ( $rss_items as $item ) {
+
+						$title = $item->get_title();
+						$content = $item->get_content();
+						$description = $item->get_description();
+						$author = $item->get_author();
+						$author = $author->get_name();
+
+						$out .= "<tr><td>";
+						$out .= "<a target='_BLANK' href='". $item->get_permalink() ."'  title='Posted ". $item->get_date('j F Y | g:i a') ."'>";
+				       		$out .= "$title</a> $description";
+						$out .= "</td></tr>";
+					} 
+				}
+			} else {$out = "<tr><td>Nothing to see here.</td></tr>";}
+		echo $out; ?>
+			<tfoot><tr><th></th></tr></tfoot>
+		</table>
+
 	</div> <!-- End Left -->
 	<div id=right>
 		<nav id="site-navigation" class="main-navigation" role="navigation">
