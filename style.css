@@ -6,13 +6,13 @@ Author:         Rob Landry
 Author URI:     http://www.landry.me/
 Template:       twentytwelve
 Version:        0.1.0
-Tags:		twentytwelve, twentytwelve-child, child, theme, options, custom, colors
+Tags:		black, blue, brown, gray, green, orange, pink, purple, red, silver, tan, white, yellow, dark, light, one-column, two-columns, right-sidebar, flexible-width, custom-background, custom-colors, custom-header, custom-menu, editor-style, featured-images, flexible-header, full-width-template, post-formats, sticky-post, theme-options, rtl-language-support
 */
 
 @import url("../twentytwelve/style.css");
 
 .site {background-color: transparent;border-radius:20px;-moz-border-radius:20px;box-shadow:none !important;}
-.main-navigation {border-radius:5px;-moz-border-radius:5px;padding-left:20px;/* fallback */background-color: #1a82f7;background:url(images/linear_bg_2.png);background-repeat: repeat-x;}
+.main-navigation {border-radius:5px;-moz-border-radius:5px;padding-left:20px;}
 /* Content */
 .main-navigation ul.nav-menu, .main-navigation div.nav-menu > ul {border-bottom: 0px;border-top: 0px;}
 .site-content article, article.comment, div#respond, .comments-title, .widget-area aside, footer[role='contentinfo'], .archive-header, .page-header {background: white;padding: 15px;border-radius:5px;-moz-border-radius:5px;box-shadow: 0 2px 6px rgba(100, 100, 100, 0.3);border-bottom:0px;}
