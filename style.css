@@ -1,11 +1,12 @@
 /*
 Theme Name:     Twenty Twelve Custom
 Theme URI:      http://redmine.landry.me/projects/twenty-twelve-custom
-Description:    Child theme for the TwentyTwelve theme 
+Description:    Child theme for the TwentyTwelve theme. This theme includes a theme options page which allows the user to customize the site color scheme. It includes default 'Dark', and 'Light'. It also allows the use of custom colors.
 Author:         Rob Landry
 Author URI:     http://www.landry.me/
 Template:       twentytwelve
 Version:        0.1.0
+Tags:		twentytwelve, twentytwelve-child, child, theme, options, custom, colors
 */
 
 @import url("../twentytwelve/style.css");
