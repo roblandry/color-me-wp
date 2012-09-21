@@ -1,0 +1,38 @@
+/*
+Theme Name:     Twenty Twelve Custom
+Theme URI:      http://redmine.landry.me/projects/twenty-twelve-custom
+Description:    Child theme for the TwentyTwelve theme 
+Author:         Rob Landry
+Author URI:     http://www.landry.me/
+Template:       twentytwelve
+Version:        0.1.0
+*/
+
+@import url("../twentytwelve/style.css");
+
+.site {background-color: transparent;border-radius:20px;-moz-border-radius:20px;box-shadow:none !important;}
+.main-navigation {border-radius:5px;-moz-border-radius:5px;padding-left:20px;/* fallback */background-color: #1a82f7;background:url(images/linear_bg_2.png);background-repeat: repeat-x;}
+/* Content */
+.main-navigation ul.nav-menu, .main-navigation div.nav-menu > ul {border-bottom: 0px;border-top: 0px;}
+.site-content article, article.comment, div#respond, .comments-title, .widget-area aside, footer[role='contentinfo'], .archive-header, .page-header {background: white;padding: 15px;border-radius:5px;-moz-border-radius:5px;box-shadow: 0 2px 6px rgba(100, 100, 100, 0.3);border-bottom:0px;}
+.single-author .entry-meta .by-author {display: inline;}
+hr.style-one {border: 0;height: 1px;background: #333;}
+.post_cats, .post_tags, .post_author, .post_date {float: left;width: 50%;}
+.post_cats span {padding: 10px 3px 10px 24px;background: url(images/16-category-icon.png) 0 50% no-repeat;}
+.post_tags span {padding: 10px 3px 10px 24px;background: url(images/16-tags-icon.png) 0 50% no-repeat;}
+.post_author div {padding: 0 3px 0 24px;background: url(images/16-author-icon.png) 0 50% no-repeat;}
+.post_date span {padding: 10px 3px 10px 24px;background: url(images/16-date-icon.png) 0 50% no-repeat;}
+.post_header {float:left;padding-bottom:24px;}
+.post_comments {float:right;padding-bottom:24px;}
+.post_comments span{padding: 0 3px 0 24px;background: url(images/16-comment-icon.png) 0 50% no-repeat;}
+span.edit-link, p.edit-link{padding: 0 3px 0 24px;background: url(images/16-edit-icon.png) 0 50% no-repeat;}
+.archive-header, .page-header {border-bottom: 0px;}
+div#respond{margin-bottom:5px;}
+.menu-toggle, input[type="submit"], article.post-password-required input[type="submit"], li.bypostauthor cite span, .menu-toggle:hover, input[type="submit"]:hover, article.post-password-required input[type="submit"]:hover, li.bypostauthor cite span:hover
+ {border-radius:15px;-webkit-border-radius: 15px;-moz-border-radius: 15px;color:#000;border:0px;}
+input[type="text"], input[type="password"], input[type="email"], input[type="url"], textarea {border-radius:15px;-webkit-border-radius: 15px;-moz-border-radius: 15px;color:#000;}
+.menu-toggle:active, .menu-toggle.toggled-on, input[type="submit"]:active, article.post-password-required input[type="submit"]:active, input[type="submit"].toggled-on{box-shadow:none;}
+/* Footer */
+footer[role="contentinfo"] {border-top:0px;margin-bottom: 5px;}
+.site-info a[rel="generator"] {display:none;}
+.copyright {text-align:center;}

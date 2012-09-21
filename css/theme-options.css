@@ -1,0 +1,46 @@
+/*
+	Twenty Twelve Custom - theme-options.css
+	Copyright (c) 2012 by Rob Landry
+
+	GNU General Public License version 3
+
+	This program is free software; you can redistribute it and/or modify
+	it under the terms of the GNU General Public License as published by
+	the Free Software Foundation; either version 3 of the License, or
+	(at your option) any later version.
+
+	This program is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
+
+	You should have received a copy of the GNU General Public License
+	along with this program; if not, write to the Free Software
+	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+*/
+.main-navigation {margin: 0 15px;border-radius: 5px;-moz-border-radius: 5px;padding-left: 20px;}
+.main-navigation ul.nav-menu, .main-navigation div.nav-menu > ul {border-bottom: 0px;border-top: 0px;display: inline-block !important;font-size: 12px;font-size: 0.857142857rem;text-align: left;width: 100%;}
+.main-navigation ul {margin: 0;text-indent: 0;}
+.main-navigation li a,	.main-navigation li {display: inline-block;text-decoration: none;}
+.main-navigation li a {border-bottom: 0;color: #6a6a6a;line-height: 3.692307692;text-transform: uppercase;}
+.main-navigation li a:hover {color: #000;}
+.main-navigation li {margin: 0 40px 0 0;margin: 0 2.857142857rem 0 0;position: relative;}
+.main-navigation li ul {display: none;margin: 0;padding: 0;position: absolute;top: 100%;z-index: 1;}
+.main-navigation li ul ul {top: 0;left: 100%;}
+.main-navigation ul li:hover > ul {border-left: 0;display: block;}
+.main-navigation li ul li a {background: #efefef;border-bottom: 1px solid #ededed;display: block;font-size: 11px;font-size: 0.785714286rem;line-height: 2.181818182;padding: 8px 10px;padding: 0.571428571rem 0.714285714rem;width: 120px;width: 8.571428571rem;}
+.main-navigation li ul li a:hover {background: #e3e3e3;color: #444;}
+.main-navigation ul.nav-menu, .main-navigation div.nav-menu > ul {display: none;}
+.main-navigation ul.nav-menu.toggled-on, .menu-toggle {display: inline-block;}
+.site-content {padding: 15px;}
+.site-content article {background: white;padding: 15px;border-radius:5px;-moz-border-radius:5px;box-shadow: 0 2px 6px rgba(100, 100, 100, 0.3);border-bottom:0px;}
+div#left, div#right {float:left;width:50%}
+.post_cats, .post_tags, .post_author, .post_date {float: left;width: 50%;}
+.post_cats span {padding: 10px 3px 10px 24px;background: url(../images/16-category-icon.png) 0 50% no-repeat;}
+.post_tags span {padding: 10px 3px 10px 24px;background: url(../images/16-tags-icon.png) 0 50% no-repeat;}
+.post_author div {padding: 0 3px 0 24px;background: url(../images/16-author-icon.png) 0 50% no-repeat;}
+.post_date span {padding: 10px 3px 10px 24px;background: url(../images/16-date-icon.png) 0 50% no-repeat;}
+.post_header {float:left;}
+.post_comments { float:right;}
+.post_comments span{padding: 0 3px 0 24px;background: url(../images/16-comment-icon.png) 0 50% no-repeat;}
+input[type="submit"], input[type="submit"]:hover {border-radius:15px;-webkit-border-radius: 15px;-moz-border-radius:15px;color:#000 !important;border:0px;}
