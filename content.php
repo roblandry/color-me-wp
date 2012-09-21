@@ -64,5 +64,6 @@
 					</div><!-- #author-description -->
 				</div><!-- #author-info -->
 			<?php endif; ?>
+		<div style="clear:both;"></div>
 		</footer><!-- .entry-meta -->
 	</article><!-- #post -->
