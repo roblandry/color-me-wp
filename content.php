@@ -15,7 +15,7 @@
 		</div>
 		<?php endif; ?>
 		<header class="entry-header">
-			<?php the_post_thumbnail(); ?>
+
 	<div class=post_header><span style=float:left;>
 			<?php if ( is_single() ) : ?>
 			<h1 class="entry-title"><?php the_title(); ?></h1>
@@ -27,13 +27,15 @@
 </span></div>
 			<?php if ( comments_open() ) : ?>
 
-<!--comments_popup_link( $zero, $one, $more, $css_class, $none )-->
+			<!--comments_popup_link( $zero, $one, $more, $css_class, $none )-->
 			<div class=post_comments><span><?php comments_popup_link(); ?></span></div>
 
 
 			<?php endif; // comments_open() ?>
+<div style=clear:both;><?php the_post_thumbnail(); ?></div>
 		</header><!-- .entry-header -->
-<div style=clear:both;></div>
+
+
 		<?php if ( is_search() ) : // Only display Excerpts for Search ?>
 		<div class="entry-summary">
 			<?php the_excerpt(); ?>

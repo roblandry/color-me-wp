@@ -156,7 +156,7 @@ function ttc_wp_head() {
 		.main-navigation li a:hover {
 			color: ".$options['nav-hlink-color'].";
 		}
-		.site-content article, article.comment, div#respond, .comments-title, .widget-area aside, footer[role='contentinfo'],.archive-header, .page-header {
+		.site-content article, article.comment, div#respond, .comments-title, .widget-area aside, footer[role='contentinfo'],.archive-header, .page-header, #author-info {
 			background: ".$options['art-bg-color'].";
 		}
 		a, .entry-header .entry-title a, .post_comments a, .post_tags a, .post_author a, .post_cats a, .post_date a, .edit-link a, .widget-area .widget a, .entry-meta a, footer[role='contentinfo'] a, .comments-area article header a time {
