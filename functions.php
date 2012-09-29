@@ -1,6 +1,6 @@
 <?php
 /*
-	Twenty Twelve Custom - functions.php
+	Color Me Wp - functions.php
 	Copyright (c) 2012 by Rob Landry
 
 	GNU General Public License version 3
@@ -26,10 +26,10 @@
 # Since: 0.1.0
 # A function to remove the TwentyTwelve Font
 #--------------------------------------------------------------
-function ttc_dequeue_fonts() {
+function cmw_dequeue_fonts() {
 	wp_dequeue_style( 'twentytwelve-fonts' );
 }
-add_action( 'wp_enqueue_scripts', 'ttc_dequeue_fonts', 11 );
+add_action( 'wp_enqueue_scripts', 'cmw_dequeue_fonts', 11 );
 
 
 #--------------------------------------------------------------
@@ -37,11 +37,11 @@ add_action( 'wp_enqueue_scripts', 'ttc_dequeue_fonts', 11 );
 # Since: 0.1.0
 # A function to Initialize the theme options page
 #--------------------------------------------------------------
-function theme_options_init(){
-	register_setting( 'ttc_options', 'ttc_theme_options');
+function cmw_options_init(){
+	register_setting( 'cmw_options', 'cmw_theme_options');
 	require_once('inc/theme-options.php');
 } 
-add_action( 'admin_init', 'theme_options_init' );
+add_action( 'admin_init', 'cmw_options_init' );
 
 
 #--------------------------------------------------------------
@@ -49,11 +49,11 @@ add_action( 'admin_init', 'theme_options_init' );
 # Since: 0.1.0
 # A function to add the theme options page
 #--------------------------------------------------------------
-function theme_options_add_page() {
-	$page = add_theme_page( __( 'Theme Options', 'ttc_theme' ), __( 'Theme Options', 'ttc_theme' ), 'edit_theme_options', 'theme-options', 'theme_options_do_page' );
-	add_action( 'admin_print_styles-' . $page, 'ttc_admin_scripts' );
+function cmw_options_add_page() {
+	$page = add_theme_page( __( 'Theme Options', 'cmw_theme' ), __( 'Theme Options', 'cmw_theme' ), 'edit_theme_options', 'theme-options', 'cmw_options_do_page' );
+	add_action( 'admin_print_styles-' . $page, 'cmw_admin_scripts' );
 }
-add_action( 'admin_menu', 'theme_options_add_page' ); 
+add_action( 'admin_menu', 'cmw_options_add_page' ); 
 
 
 #--------------------------------------------------------------
@@ -61,13 +61,13 @@ add_action( 'admin_menu', 'theme_options_add_page' );
 # Since: 0.1.0
 # A function to add the copyright to the footer
 #--------------------------------------------------------------
-function ttc_twentytwelve_credits() {
+function cmw_twentytwelve_credits() {
 	$year = date("Y");
 	$previousyear = $year -1;
 	$bloginfo = get_bloginfo( 'name', 'display' );
 	echo "<div class=copyright>Copyright &copy; <a href='".site_url()."'>$bloginfo</a> $previousyear - $year</div>";
 }
-add_action( 'twentytwelve_credits', 'ttc_twentytwelve_credits');
+add_action( 'twentytwelve_credits', 'cmw_twentytwelve_credits');
 
 
 #--------------------------------------------------------------
@@ -75,15 +75,15 @@ add_action( 'twentytwelve_credits', 'ttc_twentytwelve_credits');
 # Since: 0.1.0
 # A function to enqueue the infinite scroll js
 #--------------------------------------------------------------
-$options = get_option( 'ttc_theme_options' );
-function custom_theme_js(){
+$options = get_option( 'cmw_theme_options' );
+function cmw_theme_js(){
 	wp_register_script( 'infinite_scroll',  get_stylesheet_directory_uri() . '/js/jquery.infinitescroll.min.js', array('jquery'),null,true );
 	if( ! is_singular() ) {
 		wp_enqueue_script('infinite_scroll');
 	}
 }
 if (!empty($options['i_s_onoff']) && $options['i_s_onoff'] == 'TRUE')
-	add_action('wp_enqueue_scripts', 'custom_theme_js');
+	add_action('wp_enqueue_scripts', 'cmw_theme_js');
 
 
 #--------------------------------------------------------------
@@ -91,12 +91,9 @@ if (!empty($options['i_s_onoff']) && $options['i_s_onoff'] == 'TRUE')
 # Since: 0.1.0
 # A function to add infinite scroll js to the footer
 #--------------------------------------------------------------
-function custom_infinite_scroll_js() {
+function cmw_infinite_scroll_js() {
 	if( ! is_singular() ) { 
-	$options = get_option( 'ttc_theme_options' );
-	/*img:"http://test.landry.me/wp-content/plugins/infinite-scroll/ajax-loader.gif",
-	msgText:"<em>Loading the next set of posts...</em>",
-	finishedMsg:"<em>Congratulations, you've reached the end of the internet.</em>"*/
+	$options = get_option( 'cmw_theme_options' );
 	$i_s_img = get_stylesheet_directory_uri().'/images/ajax-loader.gif';
 	$i_s_msgText = $options['i_s_msgText'];
 	$i_s_finishedMsg = $options['i_s_finishedMsg'];
@@ -132,7 +129,7 @@ function custom_infinite_scroll_js() {
 	}
 }
 if (!empty($options['i_s_onoff']) && $options['i_s_onoff'] == 'TRUE')
-	add_action( 'wp_footer', 'custom_infinite_scroll_js',100 );
+	add_action( 'wp_footer', 'cmw_infinite_scroll_js',100 );
 
 
 #--------------------------------------------------------------
@@ -140,8 +137,8 @@ if (!empty($options['i_s_onoff']) && $options['i_s_onoff'] == 'TRUE')
 # Since: 0.1.0
 # A function to add the styles to the wp_head
 #--------------------------------------------------------------
-function ttc_wp_head() {
-	$options = get_option( 'ttc_theme_options' );
+function cmw_wp_head() {
+	$options = get_option( 'cmw_theme_options' );
 	echo "<style type='text/css'>
 		.main-navigation {
 			background: -webkit-gradient(linear, 0% 0%, 0% 100%, from(".$options['nav-bottom-color']."), to(".$options['nav-top-color']."));
@@ -186,7 +183,7 @@ function ttc_wp_head() {
 			}
 	</style>";
 }
-add_action('wp_head', 'ttc_wp_head');
+add_action('wp_head', 'cmw_wp_head');
 
 
 #--------------------------------------------------------------

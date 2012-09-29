@@ -1,6 +1,6 @@
 <?php
 /*
-	Twenty Twelve Custom - theme-options.php
+	Color Me WP - theme-options.php
 	Copyright (c) 2012 by Rob Landry
 
 	GNU General Public License version 3
@@ -51,26 +51,26 @@ $fields_light = array(
 # Since: 0.1.0
 # A function to add the styling to the admin head
 #--------------------------------------------------------------
-function ttc_admin_head() {
+function cmw_admin_head() {
 	global $fields_dark;
 	global $fields_light;
-	$options = get_option( 'ttc_theme_options' );
+	$options = get_option( 'cmw_theme_options' );
 
 	if ($options['color-scheme'] == 'dark') {
 		$fields = $fields_dark;
 		foreach ($fields as $field => $value) {
 			$options[$field] = $value['color'];
 		}
-		update_option('ttc_theme_options',$options);
+		update_option('cmw_theme_options',$options);
 	} elseif ($options['color-scheme'] == 'light') {
 		$fields = $fields_light;
 		foreach ($fields as $field => $value) {
 			$options[$field] = $value['color'];
 		}
-		update_option('ttc_theme_options',$options);
+		update_option('cmw_theme_options',$options);
 	}
 
-	ttc_wp_head();
+	cmw_wp_head();
 
 	echo "<script>
 		jQuery(document).ready(function($) {
@@ -90,8 +90,8 @@ function ttc_admin_head() {
 }
 # Load the css only on our page
 if (isset($_GET['page']) && $_GET['page'] == 'theme-options') {
-	add_action('admin_head', 'ttc_admin_head');
-	wp_enqueue_style("ttc_css", get_stylesheet_directory_uri()."/css/theme-options.css", false, "1.0", "all");
+	add_action('admin_head', 'cmw_admin_head');
+	wp_enqueue_style("cmw_css", get_stylesheet_directory_uri()."/css/theme-options.css", false, "1.0", "all");
 }
 
 #--------------------------------------------------------------
@@ -99,7 +99,7 @@ if (isset($_GET['page']) && $_GET['page'] == 'theme-options') {
 # Since: 0.1.0
 # A function to add the scripts to the admin head
 #--------------------------------------------------------------
-function ttc_admin_scripts() {
+function cmw_admin_scripts() {
     wp_enqueue_style( 'farbtastic' );
     wp_enqueue_script( 'farbtastic' );
 }
@@ -110,26 +110,25 @@ function ttc_admin_scripts() {
 # Since: 0.1.0
 # A function to add the Theme Options to the admin
 #--------------------------------------------------------------
-function theme_options_do_page() {
-	//http://theme.fm/2011/08/using-the-color-picker-in-your-wordpress-theme-options-2152/
+function cmw_options_do_page() {
 	global $select_options;
 	global $fields_dark;
 	global $fields_light;
 	if ( ! isset( $_REQUEST['settings-updated'] ) ) $_REQUEST['settings-updated'] = false; ?>
 
-	<?php screen_icon(); echo "<h2>". __( 'Custom Theme Options', 'ttc_theme' ) . "</h2><br>"; ?>
+	<?php screen_icon(); echo "<h2>". __( 'Custom Theme Options', 'cmw_theme' ) . "</h2><br>"; ?>
 
 	<?php if ( false !== $_REQUEST['settings-updated'] ) : ?>
-	<div class="updated fade"><p><strong><?php _e( 'Options saved', 'ttc_theme' ); ?></strong></p></div><br>
+	<div class="updated fade"><p><strong><?php _e( 'Options saved', 'cmw_theme' ); ?></strong></p></div><br>
 	<?php endif; ?> 
 
 	<div id=wrap>
 	<div id=left>
 
 	<form method="post" action="options.php">
-	<?php settings_fields( 'ttc_options' ); ?>  
+	<?php settings_fields( 'cmw_options' ); ?>  
 
-	<?php $options = get_option( 'ttc_theme_options' ); 
+	<?php $options = get_option( 'cmw_theme_options' ); 
 
 	$fields = array(
 		'nav-top-color' => array('color' => '#','title' => 'Navigation Top Color'),
@@ -161,18 +160,18 @@ function theme_options_do_page() {
 		$options['color-scheme'] = 'dark';
 		$options_disabled = 'disabled';
 		$options['i_s_onoff'] = 'FALSE';
-		$options['i_s_msgText'] = __( '<em>Loading the next set of posts...</em>', 'ttc_theme' );
-		$options['i_s_finishedMsg'] = __( '<em>All posts loaded.</em>', 'ttc_theme' );
+		$options['i_s_msgText'] = __( '<em>Loading the next set of posts...</em>', 'cmw_theme' );
+		$options['i_s_finishedMsg'] = __( '<em>All posts loaded.</em>', 'cmw_theme' );
 		$options['i_s_functions'] = '';
 	}
 
 	?> 
 	<table class="widefat clear" cellspacing='5'>
-	<thead><tr><th colspan=2><?php _e( 'Color Options', 'ttc_theme' ); ?></th></tr></thead>
+	<thead><tr><th colspan=2><?php _e( 'Color Options', 'cmw_theme' ); ?></th></tr></thead>
 	<tbody>
-		<tr valign="top"><td><?php _e( 'Color Scheme', 'ttc_theme' ); ?></td>
+		<tr valign="top"><td><?php _e( 'Color Scheme', 'cmw_theme' ); ?></td>
 		<td>
-		<select name="ttc_theme_options[color-scheme]">
+		<select name="cmw_theme_options[color-scheme]">
 			<?php
 				$color_scheme_dark = $color_scheme_light = $color_scheme_custom = '';
 				if ($options['color-scheme'] == 'dark') $color_scheme_dark = 'selected';
@@ -180,18 +179,18 @@ function theme_options_do_page() {
 				if ($options['color-scheme'] == 'custom') $color_scheme_custom = 'selected';
 
 			?>
-			<option value='dark' <?php echo $color_scheme_dark; ?>><?php _e('Dark', 'ttc_theme'); ?></option>
-			<option value='light' <?php echo $color_scheme_light; ?>><?php _e('Light', 'ttc_theme'); ?></option>
-			<option value='custom' <?php echo $color_scheme_custom; ?>><?php _e('Custom', 'ttc_theme'); ?></option>
+			<option value='dark' <?php echo $color_scheme_dark; ?>><?php _e('Dark', 'cmw_theme'); ?></option>
+			<option value='light' <?php echo $color_scheme_light; ?>><?php _e('Light', 'cmw_theme'); ?></option>
+			<option value='custom' <?php echo $color_scheme_custom; ?>><?php _e('Custom', 'cmw_theme'); ?></option>
 			</select>
 		</td>
 		</tr>
 
 
 		<?php foreach($fields as $field => $value) {
-			echo "<tr valign='top'><td $disabled_color>".__( $value['title'], 'ttc_theme' )."</td>";
+			echo "<tr valign='top'><td $disabled_color>".__( $value['title'], 'cmw_theme' )."</td>";
 			echo "<td $disabled_color>";
-			echo "<input type='text' name='ttc_theme_options[$field]' value='";
+			echo "<input type='text' name='cmw_theme_options[$field]' value='";
 			if ($options_disabled == 'disabled') {
 				echo $value['color']."' $disabled_color $options_disabled />";
 			}else{
@@ -200,7 +199,7 @@ function theme_options_do_page() {
 			echo "<input type='button' class='pickcolor button-secondary' value='Select Color' $options_disabled>";
 			echo "<div id='colorpicker' style='z-index: 100; background: none repeat scroll 0% 0% rgb(238, 238, 238); border: 1px solid rgb(204, 204, 204); position: absolute;'></div>";
 			if ($options_disabled == 'disabled')
-				echo "<input type='hidden' name='ttc_theme_options[$field]' value='".$value['color']."' />";
+				echo "<input type='hidden' name='cmw_theme_options[$field]' value='".$value['color']."' />";
 			echo "</td></tr>";		
 		} ?>
 
@@ -210,45 +209,45 @@ function theme_options_do_page() {
 
 		<!-- Infinite Scroll Settings -->
 		<table class=widefat cellspacing=5>
-			<thead><tr><th valign=top colspan=2><?php _e( 'Infinite Scroll Settings', 'ttc_theme' ); ?></th></tr></thead>
+			<thead><tr><th valign=top colspan=2><?php _e( 'Infinite Scroll Settings', 'cmw_theme' ); ?></th></tr></thead>
 
 			<!-- On/Off -->
-			<tr><td><strong><?php _e( 'On or Off', 'ttc_theme' ); ?></strong></td>
+			<tr><td><strong><?php _e( 'On or Off', 'cmw_theme' ); ?></strong></td>
 			<td>
-			<select name="ttc_theme_options[i_s_onoff]">
+			<select name="cmw_theme_options[i_s_onoff]">
 			<?php
 				$i_s_on = $i_s_off = '';
 				if ($options['i_s_onoff'] == 'TRUE') $i_s_on = 'selected';
 				if ($options['i_s_onoff'] == 'FALSE') $i_s_off = 'selected';
 
 			?>
-			<option value='TRUE' <?php echo $i_s_on; ?>><?php _e('On', 'ttc_theme'); ?></option>
-			<option value='FALSE' <?php echo $i_s_off; ?>><?php _e('Off', 'ttc_theme'); ?></option>
+			<option value='TRUE' <?php echo $i_s_on; ?>><?php _e('On', 'cmw_theme'); ?></option>
+			<option value='FALSE' <?php echo $i_s_off; ?>><?php _e('Off', 'cmw_theme'); ?></option>
 			</select>
 			</td></tr>
 
 			<!-- Loading Message -->
 			<tr>
-			<td colspan=2><strong><?php _e( 'Loading Message', 'ttc_theme' ); ?></strong></td></tr>
-			<td colspan=2><textarea name="ttc_theme_options[i_s_msgText]" cols='65' rows='1'><?php echo $options['i_s_msgText']; ?></textarea></td>
+			<td colspan=2><strong><?php _e( 'Loading Message', 'cmw_theme' ); ?></strong></td></tr>
+			<td colspan=2><textarea name="cmw_theme_options[i_s_msgText]" cols='65' rows='1'><?php echo $options['i_s_msgText']; ?></textarea></td>
 			</tr>
 
 			<!-- Finished Message -->
 			<tr>
-			<td colspan=2><strong><?php _e( 'Finished Message', 'ttc_theme' ); ?></strong></td></tr>
-			<td colspan=2><textarea name="ttc_theme_options[i_s_finishedMsg]" cols='65' rows='1'><?php echo $options['i_s_finishedMsg']; ?></textarea></td>
+			<td colspan=2><strong><?php _e( 'Finished Message', 'cmw_theme' ); ?></strong></td></tr>
+			<td colspan=2><textarea name="cmw_theme_options[i_s_finishedMsg]" cols='65' rows='1'><?php echo $options['i_s_finishedMsg']; ?></textarea></td>
 			</tr>
 
 			<!-- Functions -->
 			<tr>
-			<td colspan=2><strong><?php _e( 'Functions to Load', 'ttc_theme' ); ?></strong> - <a href='http://www.infinite-scroll.com/lightbox-compatibility-code/' target='_blank'><?php _e( 'Known Functions', 'ttc_theme' ); ?></a></td></tr>
-			<td colspan=2><textarea name="ttc_theme_options[i_s_functions]" cols='65' rows='3'><?php echo $options['i_s_functions']; ?></textarea></td>
+			<td colspan=2><strong><?php _e( 'Functions to Load', 'cmw_theme' ); ?></strong> - <a href='http://www.infinite-scroll.com/lightbox-compatibility-code/' target='_blank'><?php _e( 'Known Functions', 'cmw_theme' ); ?></a></td></tr>
+			<td colspan=2><textarea name="cmw_theme_options[i_s_functions]" cols='65' rows='3'><?php echo $options['i_s_functions']; ?></textarea></td>
 			</tr>
 
 			<tfoot><tr><th colspan=2></th></tr></tfoot>
 		</table><br>
 	<p>
-	<input type="submit" value="<?php _e( 'Save Options', 'ttc_theme' ); ?>" />
+	<input type="submit" value="<?php _e( 'Save Options', 'cmw_theme' ); ?>" />
 	</p>
 	</form>
 
@@ -282,7 +281,7 @@ function theme_options_do_page() {
 
 				<div style="clear:both;"></div>
 
-				<div class="entry-content"><p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam turpis sem, semper et faucibus non, luctus vitae ipsum. Fusce fermentum rutrum auctor. Aliquam erat volutpat. Quisque eros dolor, pretium eget aliquet sed, tempor eget velit. Maecenas neque lacus, condimentum consequat varius ut, mollis ac ipsum. Curabitur tempor, lacus vel eleifend vulputate, leo enim hendrerit ligula, ut cursus nunc lorem quis justo. Suspendisse cursus, metus id tempus congue, mi nibh euismod odio, ut ullamcorper erat sapien sed nibh.</p><br><input type='submit' class='ttc-submit'></div><!-- .entry-content -->
+				<div class="entry-content"><p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam turpis sem, semper et faucibus non, luctus vitae ipsum. Fusce fermentum rutrum auctor. Aliquam erat volutpat. Quisque eros dolor, pretium eget aliquet sed, tempor eget velit. Maecenas neque lacus, condimentum consequat varius ut, mollis ac ipsum. Curabitur tempor, lacus vel eleifend vulputate, leo enim hendrerit ligula, ut cursus nunc lorem quis justo. Suspendisse cursus, metus id tempus congue, mi nibh euismod odio, ut ullamcorper erat sapien sed nibh.</p><br><input type='submit' class='cmw-submit'></div><!-- .entry-content -->
 		
 				<footer class="entry-meta">
 				<hr class="style-one">
@@ -298,7 +297,7 @@ function theme_options_do_page() {
 
 		<!-- RSS -->
 		<table class=widefat cellspacing=5 style="margin:0 15px;width:94%">
-			<thead><tr><th valign=top ><?php _e( 'News', 'ttc_theme' ); ?></th></tr></thead>
+			<thead><tr><th valign=top ><?php _e( 'News', 'cmw_theme' ); ?></th></tr></thead>
 			<?php 
 			$rss = fetch_feed('http://redmine.landry.me/projects/twenty-twelve-custom/news.atom');
 			$out = '';
