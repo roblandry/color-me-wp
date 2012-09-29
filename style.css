@@ -15,7 +15,7 @@ Tags:		black, blue, brown, gray, green, orange, pink, purple, red, silver, tan, 
 .main-navigation {border-radius:5px;-moz-border-radius:5px;padding-left:20px;}
 /* Content */
 .main-navigation ul.nav-menu, .main-navigation div.nav-menu > ul {border-bottom: 0px;border-top: 0px;}
-.site-content article, article.comment, div#respond, .comments-title, .widget-area aside, footer[role='contentinfo'], .archive-header, .page-header, #author-info {background: white;padding: 15px;border-radius:5px;-moz-border-radius:5px;box-shadow: 0 2px 6px rgba(100, 100, 100, 0.3);border-bottom:0px;}
+.site-content article, article.comment, li.pingback p, div#respond, .comments-title, .widget-area aside, footer[role='contentinfo'], .archive-header, .page-header, #author-info {background: white;padding: 15px;border-radius:5px;-moz-border-radius:5px;box-shadow: 0 2px 6px rgba(100, 100, 100, 0.3);border-bottom:0px;}
 .single-author .entry-meta .by-author {display: inline;}
 hr.style-one {border: 0;height: 1px;background: #333;}
 .post_cats, .post_tags, .post_author, .post_date {float: left;width: 50%;}
