@@ -299,7 +299,7 @@ function cmw_options_do_page() {
 		<table class=widefat cellspacing=5 style="margin:0 15px;width:94%">
 			<thead><tr><th valign=top ><?php _e( 'News', 'cmw_theme' ); ?></th></tr></thead>
 			<?php 
-			$rss = fetch_feed('http://redmine.landry.me/projects/twenty-twelve-custom/news.atom');
+			$rss = fetch_feed('http://redmine.landry.me/projects/color-me-wp/news.atom');
 			$out = '';
 			if (!is_wp_error( $rss ) ) {
 				$maxitems = $rss->get_item_quantity(50);     
