@@ -19,8 +19,10 @@
 	along with this program; if not, write to the Free Software
 	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-
-
+	// Load up our theme options page and related code.
+global $color_me_wp_options;
+require( get_stylesheet_directory() . '/inc/theme-options.php' );
+$color_me_wp_options = new Color_Me_WP_Options();
 #--------------------------------------------------------------
 # Dequeue Fonts
 # Since: 0.1.0
@@ -38,8 +40,8 @@ add_action( 'wp_enqueue_scripts', 'cmw_dequeue_fonts', 11 );
 # A function to Initialize the theme options page
 #--------------------------------------------------------------
 function cmw_options_init(){
-	register_setting( 'cmw_options', 'cmw_theme_options');
-	require_once('inc/theme-options.php');
+	//register_setting( 'cmw_options', 'cmw_theme_options');
+	//require_once('inc/theme-options.php');
 } 
 add_action( 'admin_init', 'cmw_options_init' );
 
@@ -53,7 +55,7 @@ function cmw_options_add_page() {
 	$page = add_theme_page( __( 'Theme Options', 'cmw_theme' ), __( 'Theme Options', 'cmw_theme' ), 'edit_theme_options', 'theme-options', 'cmw_options_do_page' );
 	add_action( 'admin_print_styles-' . $page, 'cmw_admin_scripts' );
 }
-add_action( 'admin_menu', 'cmw_options_add_page' ); 
+//add_action( 'admin_menu', 'cmw_options_add_page' ); 
 
 
 #--------------------------------------------------------------
@@ -70,66 +72,22 @@ function cmw_twentytwelve_credits() {
 add_action( 'twentytwelve_credits', 'cmw_twentytwelve_credits');
 
 
-#--------------------------------------------------------------
-# Infinite Scroll JS
-# Since: 0.1.0
-# A function to enqueue the infinite scroll js
-#--------------------------------------------------------------
-$options = get_option( 'cmw_theme_options' );
-function cmw_theme_js(){
-	wp_register_script( 'infinite_scroll',  get_stylesheet_directory_uri() . '/js/jquery.infinitescroll.min.js', array('jquery'),null,true );
-	if( ! is_singular() ) {
-		wp_enqueue_script('infinite_scroll');
-	}
-}
-if (!empty($options['i_s_onoff']) && $options['i_s_onoff'] == 'TRUE')
-	add_action('wp_enqueue_scripts', 'cmw_theme_js');
+/*
+ * @since Twenty Twelve 1.0
+ */
+function color_me_wp_setup() {
+	global $color_me_wp_options;
+ 	/*
+     	 * Makes Twenty Twelve available for translation.
+     	 *
+    	 */
+     	load_theme_textdomain( 'color-me-wp', get_template_directory() . '/languages' );
+     
 
-
-#--------------------------------------------------------------
-# Custom Infinite Scroll JS
-# Since: 0.1.0
-# A function to add infinite scroll js to the footer
-#--------------------------------------------------------------
-function cmw_infinite_scroll_js() {
-	if( ! is_singular() ) { 
-	$options = get_option( 'cmw_theme_options' );
-	$i_s_img = get_stylesheet_directory_uri().'/images/ajax-loader.gif';
-	$i_s_msgText = $options['i_s_msgText'];
-	$i_s_finishedMsg = $options['i_s_finishedMsg'];
-	$i_s_functions = $options['i_s_functions'];
-?>
-		<script type="text/javascript">
-			function infinite_scroll_callback(newElements,data){<?php echo $i_s_functions; ?>}
-			jQuery(document).ready(function($){
-				$("#content").infinitescroll({
-					debug:false,
-					loading:{
-						img:"<?php echo $i_s_img; ?>",
-						msgText:"<?php echo $i_s_msgText; ?>",
-						finishedMsg:"<?php echo $i_s_finishedMsg; ?>"
-					},
-					state:{currPage:"1"},
-					behavior:"undefined",
-					nextSelector:"#nav-below .nav-previous a:first",
-					navSelector:"#nav-below",
-					contentSelector:"#content",
-					itemSelector:"#content article.post"
-				},
-				function(newElements,data){
-					window.setTimeout(
-						function(){infinite_scroll_callback(newElements,data)}
-					,1);
-				});
-			});
-		</script>
-		<style type="text/css">
-			#infscr-loading { text-align: center; }
-		</style><?php
-	}
+ 	// This theme styles the visual editor with editor-style.css to match the theme style.
+     	add_editor_style();
 }
-if (!empty($options['i_s_onoff']) && $options['i_s_onoff'] == 'TRUE')
-	add_action( 'wp_footer', 'cmw_infinite_scroll_js',100 );
+add_action( 'after_setup_theme', 'color_me_wp_setup' );
 
 
 #--------------------------------------------------------------
@@ -138,48 +96,50 @@ if (!empty($options['i_s_onoff']) && $options['i_s_onoff'] == 'TRUE')
 # A function to add the styles to the wp_head
 #--------------------------------------------------------------
 function cmw_wp_head() {
-	$options = get_option( 'cmw_theme_options' );
+	global $color_me_wp_options;
+	$new_options = get_option( $color_me_wp_options->option_key );
+
 	echo "<style type='text/css'>
 		.main-navigation {
-			background: -webkit-gradient(linear, 0% 0%, 0% 100%, from(".$options['nav-bottom-color']."), to(".$options['nav-top-color']."));
-			background: -webkit-linear-gradient(top, ".$options['nav-top-color'].", ".$options['nav-bottom-color'].");
-			background: -moz-linear-gradient(top, ".$options['nav-top-color'].", ".$options['nav-bottom-color'].");
-			background: -ms-linear-gradient(top, ".$options['nav-top-color'].", ".$options['nav-bottom-color'].");
-			background: -o-linear-gradient(top, ".$options['nav-top-color'].", ".$options['nav-bottom-color'].");
+			background: -webkit-gradient(linear, 0% 0%, 0% 100%, from(".$new_options['color_nav_bottom']."), to(".$new_options['color_nav_top']."));
+			background: -webkit-linear-gradient(top, ".$new_options['color_nav_top'].", ".$new_options['color_nav_bottom'].");
+			background: -moz-linear-gradient(top, ".$new_options['color_nav_top'].", ".$new_options['color_nav_bottom'].");
+			background: -ms-linear-gradient(top, ".$new_options['color_nav_top'].", ".$new_options['color_nav_bottom'].");
+			background: -o-linear-gradient(top, ".$new_options['color_nav_top'].", ".$new_options['color_nav_bottom'].");
 		}
 		.main-navigation li a {
-			color: ".$options['nav-link-color'].";
+			color: ".$new_options['color_nav_link'].";
 		}
 		.main-navigation li a:hover {
-			color: ".$options['nav-hlink-color'].";
+			color: ".$new_options['color_nav_link_hover'].";
 		}
 		.site-content article, article.comment, li.pingback p, div#respond, .comments-title, .widget-area aside, footer[role='contentinfo'],.archive-header, .page-header, .author-info {
-			background: ".$options['art-bg-color'].";
+			background: ".$new_options['color_article_bg'].";
 		}
 		a, .entry-header .entry-title a, .post_comments a, .post_tags a, .post_author a, .post_cats a, .post_date a, .edit-link a, .widget-area .widget a, .entry-meta a, footer[role='contentinfo'] a, .comments-area article header a time {
-			color: ".$options['nav-link-color'].";
+			color: ".$new_options['color_nav_link'].";
 		}
 		a:hover, .entry-header .entry-title a:hover, .post_comments a:hover, .post_tags a:hover, .post_author a:hover, .post_cats a:hover, .post_date a:hover, .edit-link a:hover, .widget-area .widget a:hover, .entry-meta a:hover, footer[role='contentinfo'] a:hover, .comments-area article header a time:hover {
-			color: ".$options['nav-hlink-color'].";
+			color: ".$new_options['color_nav_link_hover'].";
 		}
 		hr.style-one {
-			background-image: -webkit-linear-gradient(left, ".$options['art-bg-color'].", #ccc, ".$options['art-bg-color']."); 
-			background-image:    -moz-linear-gradient(left, ".$options['art-bg-color'].", #ccc, ".$options['art-bg-color']."); 
-			background-image:     -ms-linear-gradient(left, ".$options['art-bg-color'].", #ccc, ".$options['art-bg-color']."); 
-			background-image:      -o-linear-gradient(left, ".$options['art-bg-color'].", #ccc, ".$options['art-bg-color']."); 
+			background-image: -webkit-linear-gradient(left, ".$new_options['color_article_bg'].", #ccc, ".$new_options['color_article_bg']."); 
+			background-image:    -moz-linear-gradient(left, ".$new_options['color_article_bg'].", #ccc, ".$new_options['color_article_bg']."); 
+			background-image:     -ms-linear-gradient(left, ".$new_options['color_article_bg'].", #ccc, ".$new_options['color_article_bg']."); 
+			background-image:      -o-linear-gradient(left, ".$new_options['color_article_bg'].", #ccc, ".$new_options['color_article_bg']."); 
 		}
 		body, .entry-content, .archive-title, .page-title, .widget-title, .entry-content th, .comment-content th, footer.entry-meta, footer, .main-navigation .current-menu-item > a, .main-navigation .current-menu-ancestor > a, .main-navigation .current_page_item > a, .main-navigation .current_page_ancestor > a {
-			color: ".$options['text-color'].";
+			color: ".$new_options['color_text'].";
 		}
 		input[type='submit'], .menu-toggle, .menu-toggle.toggled-on, input[type='submit'].toggled-on {
-			background: -webkit-gradient(linear, left top, left bottom, from(".$options['nav-link-color']."), to(".$options['nav-bottom-color']."));
-			background: -moz-linear-gradient(top, ".$options['nav-link-color'].", ".$options['nav-bottom-color'].");
-			filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='".$options['nav-link-color']."', endColorstr='".$options['nav-bottom-color']."')
+			background: -webkit-gradient(linear, left top, left bottom, from(".$new_options['color_nav_link']."), to(".$new_options['color_nav_bottom']."));
+			background: -moz-linear-gradient(top, ".$new_options['color_nav_link'].", ".$new_options['color_nav_bottom'].");
+			filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='".$new_options['color_nav_link']."', endColorstr='".$new_options['color_nav_bottom']."')
 			}
 		input[type='submit']:hover, .menu-toggle:hover, article.post-password-required input[type='submit']:hover {
-			background: -webkit-gradient(linear, left top, left bottom, from(".$options['nav-hlink-color']."), to(".$options['nav-bottom-color']."));
-			background: -moz-linear-gradient(top, ".$options['nav-hlink-color'].", ".$options['nav-bottom-color'].");
-			filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='".$options['nav-hlink-color']."', endColorstr='".$options['nav-bottom-color']."')
+			background: -webkit-gradient(linear, left top, left bottom, from(".$new_options['color_nav_link_hover']."), to(".$new_options['color_nav_bottom']."));
+			background: -moz-linear-gradient(top, ".$new_options['color_nav_link_hover'].", ".$new_options['color_nav_bottom'].");
+			filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='".$new_options['color_nav_link_hover']."', endColorstr='".$new_options['color_nav_bottom']."')
 			}
 	</style>";
 }
@@ -233,4 +193,5 @@ function twentytwelve_entry_meta() {
 		$author
 	);
 }
+
 ?>

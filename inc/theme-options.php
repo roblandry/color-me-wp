@@ -1,303 +1,816 @@
 <?php
-/*
-	Color Me WP - theme-options.php
-	Copyright (c) 2012 by Rob Landry
+/**
+ * Color Me WP Theme Options
+ *
+ * @package WordPress
+ * @subpackage Twenty_Twelve
+ * @since Color Me WP 1.0
+ */
 
-	GNU General Public License version 3
+class Color_Me_WP_Options {
+	/**
+	 * The option value in the database will be based on get_stylesheet()
+	 * so child themes don't share the parent theme's option value.
+	 *
+	 * @access public
+	 * @var string
+	 */
+	public $option_key = 'color_me_wp_theme_options';
 
-	This program is free software; you can redistribute it and/or modify
-	it under the terms of the GNU General Public License as published by
-	the Free Software Foundation; either version 3 of the License, or
-	(at your option) any later version.
+	/**
+	 * Holds our options.
+	 *
+	 * @access public
+	 * @var array
+	 */
+	public $options = array();
 
-	This program is distributed in the hope that it will be useful,
-	but WITHOUT ANY WARRANTY; without even the implied warranty of
-	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-	GNU General Public License for more details.
+	/**
+	 * Constructor.
+	 *
+	 * @access public
+	 *
+	 * @return Color_Me_WP_Options
+	 */
+	public function __construct() {
+		// Set option key based on get_stylesheet()
+		//if ( 'color_me_wp' != get_stylesheet() )
+		//	$this->option_key = get_stylesheet() . '_theme_options';
 
-	You should have received a copy of the GNU General Public License
-	along with this program; if not, write to the Free Software
-	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-*/
+		add_action( 'admin_init',		array( $this, 'options_init'		) );
+		//add_action( 'admin_menu',		array( $this, 'add_page'		) );
+		add_action( 'customize_register',	array( $this, 'customize_register'	) );
+		add_action( 'customize_preview_init',	array( $this, 'customize_preview_js'	) );
+		add_action( 'admin_enqueue_scripts', 	array( $this, 'color_me_wp_admin_scripts') );
 
-
-#--------------------------------------------------------------
-# Defaults
-# Since: 0.1.0
-#--------------------------------------------------------------
-
-global $fields_dark;
-global $fields_light;
-$fields_dark = array(
-	'nav-top-color' => array('color' => '#3a3636','title' => 'Navigation Top Color'),
-	'nav-bottom-color' => array('color' => '#030303','title' => 'Navigation Bottom Color'),
-	'nav-link-color' => array('color' => '#21759B','title' => 'Navigation Link Color'),
-	'nav-hlink-color' => array('color' => '#64b7dd','title' => 'Navigation Link Hover Color'),
-	'art-bg-color' => array('color' => '#111','title' => 'Article Background Color'),
-	'text-color' => array('color' => '#777','title' => 'Text Color')
-	);
-$fields_light = array(
-	'nav-top-color' => array('color' => '#ddd','title' => 'Navigation Top Color'),
-	'nav-bottom-color' => array('color' => '#8a8a8a','title' => 'Navigation Bottom Color'),
-	'nav-link-color' => array('color' => '#21759B','title' => 'Navigation Link Color'),
-	'nav-hlink-color' => array('color' => '#0b2d83','title' => 'Navigation Link Hover Color'),
-	'art-bg-color' => array('color' => '#FFF','title' => 'Article Background Color'),
-	'text-color' => array('color' => '#777','title' => 'Text Color')
-	);
-
-
-#--------------------------------------------------------------
-# Admin Head
-# Since: 0.1.0
-# A function to add the styling to the admin head
-#--------------------------------------------------------------
-function cmw_admin_head() {
-	global $fields_dark;
-	global $fields_light;
-	$options = get_option( 'cmw_theme_options' );
-
-	if ($options['color-scheme'] == 'dark') {
-		$fields = $fields_dark;
-		foreach ($fields as $field => $value) {
-			$options[$field] = $value['color'];
+		$options = get_option( $this->option_key );
+		if (!empty($options['enable_iscroll']) && $options['enable_iscroll'] == true) {
+			add_action('wp_enqueue_scripts', array( $this, 'cmw_theme_js' ) );
+			add_action( 'wp_footer', array( $this, 'cmw_infinite_scroll_style' ) );
 		}
-		update_option('cmw_theme_options',$options);
-	} elseif ($options['color-scheme'] == 'light') {
-		$fields = $fields_light;
-		foreach ($fields as $field => $value) {
-			$options[$field] = $value['color'];
+		$script = $_SERVER['SCRIPT_NAME'];
+
+		if (strpos($script, 'customize.php') !== false || strpos($script, 'themes.php') !== false) {
+			//add_action( 'admin_header', array( $this, 'cmw_feedback_link' ) );
+			echo $this::cmw_feedback_link();
 		}
-		update_option('cmw_theme_options',$options);
 	}
 
-	cmw_wp_head();
+	/**
+	 * Registers the form setting for our options array.
+	 *
+	 * This function is attached to the admin_init action hook.
+	 *
+	 * This call to register_setting() registers a validation callback, validate(),
+	 * which is used when the option is saved, to ensure that our option values are properly
+	 * formatted, and safe.
+	 *
+	 * @access public
+	 *
+	 * @return void
+	 */
+	public function options_init() {
+		// Load our options for use in any method.
+		$this->options = $this->get_theme_options();
 
-	echo "<script>
-		jQuery(document).ready(function($) {
-			$('.pickcolor').click( function(e) {
-				colorPicker = jQuery(this).next('div');
-				input = jQuery(this).prev('input');
-				$(colorPicker).farbtastic(input);
-				colorPicker.show();
-				e.preventDefault();
-				$(document).mousedown( function() {
-					$(colorPicker).hide();
-				});
-			});
-
-		});
-	</script>";
-}
-# Load the css only on our page
-if (isset($_GET['page']) && $_GET['page'] == 'theme-options') {
-	add_action('admin_head', 'cmw_admin_head');
-	wp_enqueue_style("cmw_css", get_stylesheet_directory_uri()."/css/theme-options.css", false, "1.0", "all");
-}
-
-#--------------------------------------------------------------
-# Admin Scripts
-# Since: 0.1.0
-# A function to add the scripts to the admin head
-#--------------------------------------------------------------
-function cmw_admin_scripts() {
-    wp_enqueue_style( 'farbtastic' );
-    wp_enqueue_script( 'farbtastic' );
-}
-
-
-#--------------------------------------------------------------
-# Theme Options Page
-# Since: 0.1.0
-# A function to add the Theme Options to the admin
-#--------------------------------------------------------------
-function cmw_options_do_page() {
-	global $select_options;
-	global $fields_dark;
-	global $fields_light;
-	if ( ! isset( $_REQUEST['settings-updated'] ) ) $_REQUEST['settings-updated'] = false; ?>
-
-	<?php screen_icon(); echo "<h2>". __( 'Custom Theme Options', 'cmw_theme' ) . "</h2><br>"; ?>
-
-	<?php if ( false !== $_REQUEST['settings-updated'] ) : ?>
-	<div class="updated fade"><p><strong><?php _e( 'Options saved', 'cmw_theme' ); ?></strong></p></div><br>
-	<?php endif; ?> 
-
-	<div id=wrap>
-	<div id=left>
-
-	<form method="post" action="options.php">
-	<?php settings_fields( 'cmw_options' ); ?>  
-
-	<?php $options = get_option( 'cmw_theme_options' ); 
-
-	$fields = array(
-		'nav-top-color' => array('color' => '#','title' => 'Navigation Top Color'),
-		'nav-bottom-color' => array('color' => '#','title' => 'Navigation Bottom Color'),
-		'nav-link-color' => array('color' => '#','title' => 'Navigation Link Color'),
-		'nav-hlink-color' => array('color' => '#','title' => 'Navigation Link Hover Color'),
-		'art-bg-color' => array('color' => '#','title' => 'Article Background Color'),
-		'text-color' => array('color' => '#','title' => 'Text Color')
+		// Register our option group.
+		register_setting(
+			'color_me_wp_options',    // Options group, see settings_fields() call in render_page()
+			$this->option_key,         // Database option, see get_theme_options()
+			array( $this, 'validate' ) // The sanitization callback, see validate()
 		);
 
+		// Register our settings field group.
+		add_settings_section(
+			'general',        // Unique identifier for the settings section
+			'',               // Section title (we don't want one)
+			'__return_false', // Section callback (we don't want anything)
+			'theme_options'   // Menu slug, used to uniquely identify the page; see add_page()
+		);
 
-	$disabled_color = 'style="color:gray;"';
-	if (!empty($options)) {
-		switch ($options['color-scheme']) {
-			case 'dark':
-				$options_disabled = 'disabled';
-				$fields = $fields_dark;
-				break;
-			case 'light':
-				$options_disabled = 'disabled';
-				$fields = $fields_light;
-				break;
-			case 'custom':
-				$options_disabled = '';
-				$disabled_color = '';
-				break;
+		global $options_arr;
+		$options_arr = array(
+			//'enable_fonts' => 'Enable Web Fonts',
+			'enable_iscroll' => 'Enable Infinite Scroll',
+			'iscroll_text' => 'Infinite Scroll Loading Text',
+			'iscroll_finish' => 'Infinite Scroll Finished Loading Text',
+			'iscroll_Functions' => 'Infinite Scroll Functions to Load when Finished',
+			'color_nav_top' => 'Navigation Bar Top Color',
+			'color_nav_bottom' => 'Navigation Bar Bottom Color',
+			'color_nav_link' => 'Site Link Color',
+			'color_nav_link_hover' => 'Site Link Hover Color',
+			'color_article_bg' => 'Article Background Color',
+			'color_text' => 'Site Text Color',
+		);
+
+		foreach ($options_arr as $option_value => $option_text) {
+
+			// Register our individual settings fields.
+			add_settings_field(
+				$option_value,
+				__( $option_text, 'color-me-wp' ),
+				array( $this, 'settings_field_'.$option_value ),
+				'theme_options',
+				'general'
+			);
 		}
-	} else {
-		$options['color-scheme'] = 'dark';
-		$options_disabled = 'disabled';
-		$options['i_s_onoff'] = 'FALSE';
-		$options['i_s_msgText'] = __( '<em>Loading the next set of posts...</em>', 'cmw_theme' );
-		$options['i_s_finishedMsg'] = __( '<em>All posts loaded.</em>', 'cmw_theme' );
-		$options['i_s_functions'] = '';
+
 	}
 
-	?> 
-	<table class="widefat clear" cellspacing='5'>
-	<thead><tr><th colspan=2><?php _e( 'Color Options', 'cmw_theme' ); ?></th></tr></thead>
-	<tbody>
-		<tr valign="top"><td><?php _e( 'Color Scheme', 'cmw_theme' ); ?></td>
-		<td>
-		<select name="cmw_theme_options[color-scheme]">
-			<?php
-				$color_scheme_dark = $color_scheme_light = $color_scheme_custom = '';
-				if ($options['color-scheme'] == 'dark') $color_scheme_dark = 'selected';
-				if ($options['color-scheme'] == 'light') $color_scheme_light = 'selected';
-				if ($options['color-scheme'] == 'custom') $color_scheme_custom = 'selected';
+	/**
+	 * Adds our theme options page to the admin menu.
+	 *
+	 * This function is attached to the admin_menu action hook.
+	 *
+	 * @access public
+	 *
+	 * @return void
+	 */
+	public function add_page() {
+		$theme_page = add_theme_page(
+			__( 'Theme Options', 'color-me-wp' ), // Name of page
+			__( 'Theme Options', 'color-me-wp' ), // Label in menu
+			'edit_theme_options',                  // Capability required
+			'theme_options',                       // Menu slug, used to uniquely identify the page
+			array( $this, 'render_page' )          // Function that renders the options page
+		);
+	}
 
+	/**
+	 * Returns the default options.
+	 *
+	 * @access public
+	 *
+	 * @return array
+	 */
+	public function get_default_theme_options() {
+		$default_theme_options = array(
+			'enable_fonts' => false,
+			// Added
+			'enable_iscroll' => false,
+			'iscroll_text' => '<em>Loading the next set of posts...</em>',
+			'iscroll_finish' => '<em>All posts loaded.</em>',
+			'iscroll_functions' => '',
+			'color_default' => 'Dark',
+			'color_nav_top' => '#3a3636',
+			'color_nav_bottom' => '#030303',
+			'color_nav_link' => '#21759B',
+			'color_nav_link_hover' => '#64b7dd',
+			'color_article_bg' => '#111',
+			'color_text' => '#777',
+			// \Added
+		);
+
+		return apply_filters( 'color_me_wp_default_theme_options', $default_theme_options );
+	}
+
+	/**
+	 * Returns the options array.
+	 *
+	 * @access public
+	 *
+	 * @return array
+	 */
+	public function get_theme_options() {
+		return get_option( $this->option_key, $this->get_default_theme_options() );
+	}
+
+	/**
+	 * Renders the enable fonts checkbox setting field.
+	 *
+	 * @access public
+	 *
+	 * @return void
+	 */
+	public function settings_field_enable_fonts() {
+		global $options_arr;
+		$options = $this->options;
+		?>
+		<label for="enable_fonts">
+			<input type="checkbox" name="<?php echo $this->option_key; ?>[enable_fonts]" id="enable_fonts" <?php checked( $options['enable_fonts'] ); ?> />
+			<?php _e( $options_arr['enable_fonts'], 'color-me-wp' );  ?>
+		</label>
+		<?php
+	}
+
+
+	/**
+	 * Renders the enable iscroll setting field.
+	 *
+	 * @access public
+	 *
+	 * @return void
+	 */
+	public function settings_field_enable_iscroll() {
+		global $options_arr;
+		$options = $this->options;
+		?>
+		<label for="enable_iscroll">
+			<input type="checkbox" name="<?php echo $this->option_key; ?>[enable_iscroll]" id="enable_iscroll" <?php checked( $options['enable_iscroll'] ); ?> />
+			<?php _e( $options_arr['enable_iscroll'], 'color-me-wp' );  ?>
+		</label>
+		<?php
+	}
+
+	public function settings_field_iscroll_text() {
+		global $options_arr;
+		$options = $this->options;
+		?>
+		<label for="iscroll_text">
+			<input type="text" name="<?php echo $this->option_key; ?>[iscroll_text]" id="iscroll_text" value="<?php echo $options['iscroll_text']; ?>" />
+		</label>
+		<?php
+	}
+
+	public function settings_field_iscroll_finish() {
+		global $options_arr;
+		$options = $this->options;
+		?>
+		<label for="iscroll_finish">
+			<input type="text" name="<?php echo $this->option_key; ?>[iscroll_finish]" id="iscroll_finish" value="<?php echo $options['iscroll_finish']; ?>" />
+		</label>
+		<?php
+	}
+
+	public function settings_field_iscroll_functions() {
+		global $options_arr;
+		$options = $this->options;
+		?>
+		<label for="iscroll_functions">
+			<input type="text" name="<?php echo $this->option_key; ?>[iscroll_functions]" id="iscroll_functions" value="<?php echo $options['iscroll_functions']; ?>" />
+		</label>
+		<?php
+	}
+
+	public function settings_field_color_nav_top() {
+		global $options_arr;
+		$options = $this->options;
+		?>
+		<label for="color_nav_top">
+			<input type="text" name="<?php echo $this->option_key; ?>[color_nav_top]" id="color_nav_top" value="<?php echo $options['color_nav_top']; ?>" />
+			<input type='button' class='pickcolor button-secondary' value='Select Color' >
+			<div id='colorpicker' style='z-index: 100; background: none repeat scroll 0% 0% rgb(238, 238, 238); border: 1px solid rgb(204, 204, 204); position: absolute;'></div>
+		</label>
+		<?php
+	}
+
+	public function settings_field_color_nav_bottom() {
+		global $options_arr;
+		$options = $this->options;
+		?>
+		<label for="color_nav_bottom">
+			<input type="text" name="<?php echo $this->option_key; ?>[color_nav_bottom]" id="color_nav_bottom" value="<?php echo $options['color_nav_bottom']; ?>" />
+			<input type='button' class='pickcolor button-secondary' value='Select Color' >
+			<div id='colorpicker' style='z-index: 100; background: none repeat scroll 0% 0% rgb(238, 238, 238); border: 1px solid rgb(204, 204, 204); position: absolute;'></div>
+		</label>
+		<?php
+	}
+
+	public function settings_field_color_nav_link() {
+		global $options_arr;
+		$options = $this->options;
+		?>
+		<label for="color_nav_link">
+			<input type="text" name="<?php echo $this->option_key; ?>[color_nav_link]" id="color_nav_link" value="<?php echo $options['color_nav_link']; ?>" />
+			<input type='button' class='pickcolor button-secondary' value='Select Color' >
+			<div id='colorpicker' style='z-index: 100; background: none repeat scroll 0% 0% rgb(238, 238, 238); border: 1px solid rgb(204, 204, 204); position: absolute;'></div>
+		</label>
+		<?php
+	}
+
+	public function settings_field_color_nav_link_hover() {
+		global $options_arr;
+		$options = $this->options;
+		?>
+		<label for="color_nav_link_hover">
+			<input type="text" name="<?php echo $this->option_key; ?>[color_nav_link_hover]" id="color_nav_link_hover" value="<?php echo $options['color_nav_link_hover']; ?>" />
+			<input type='button' class='pickcolor button-secondary' value='Select Color' >
+			<div id='colorpicker' style='z-index: 100; background: none repeat scroll 0% 0% rgb(238, 238, 238); border: 1px solid rgb(204, 204, 204); position: absolute;'></div>
+		</label>
+		<?php
+	}
+
+	public function settings_field_color_article_bg() {
+		global $options_arr;
+		$options = $this->options;
+		?>
+		<label for="color_article_bg">
+			<input type="text" name="<?php echo $this->option_key; ?>[color_article_bg]" id="color_article_bg" value="<?php echo $options['color_article_bg']; ?>" />
+			<input type='button' class='pickcolor button-secondary' value='Select Color' >
+			<div id='colorpicker' style='z-index: 100; background: none repeat scroll 0% 0% rgb(238, 238, 238); border: 1px solid rgb(204, 204, 204); position: absolute;'></div>
+		</label>
+		<?php
+	}
+
+	public function settings_field_color_text() {
+		global $options_arr;
+		$options = $this->options;
+		?>
+		<label for="color_text">
+			<input type="text" name="<?php echo $this->option_key; ?>[color_text]" id="color_text" value="<?php echo $options['color_text']; ?>" />
+			<input type='button' class='pickcolor button-secondary' value='Select Color' >
+			<div id='colorpicker' style='z-index: 100; background: none repeat scroll 0% 0% rgb(238, 238, 238); border: 1px solid rgb(204, 204, 204); position: absolute;'></div>
+		</label>
+		<?php
+	}
+
+
+
+	/**
+	 * Displays the theme options page.
+	 *
+	 * @uses get_current_theme() for back compat, fallback for < 3.4
+	 * @access public
+	 *
+	 * @return void
+	 */
+	public function render_page() {
+		?>
+		<div class="wrap">
+			<?php screen_icon(); ?>
+			<?php $theme_name = function_exists( 'wp_get_theme' ) ? wp_get_theme() : get_current_theme(); ?>
+			<h2><?php printf( __( '%s Theme Options', 'color-me-wp' ), $theme_name ); ?></h2>
+			<?php settings_errors(); ?>
+
+			<form method="post" action="options.php">
+				<?php
+					echo "<!--div style='float:left;'-->";
+					echo "<div class=wp-fill-overlay-sidebar-content>";
+					echo "<div class=customize-theme-controls>";
+					settings_fields( 'color_me_wp_options' );
+					do_settings_sections( 'theme_options' );
+					submit_button();
+					echo "</div>";
+					echo "</div>";
+					echo "<div id=customize-preview class=wp-full-overlay-main>";
+					echo "<iframe src='http://test.landry.me' width=500px height=500px></iframe>";
+					echo "</div>";
+				?>
+			</form>
+		</div>
+		<?php
+	}
+
+
+
+	public function color_me_wp_admin_scripts() {
+		if (isset($_GET['page']) && $_GET['page'] == 'theme_options') {
+
+		wp_enqueue_style( 'farbtastic' );
+		wp_enqueue_style( 'customize-controls' );
+		wp_enqueue_script( 'customize-controls' );
+		wp_enqueue_script( 'underscore' );
+		wp_enqueue_script( 'backbone' );
+		wp_enqueue_script( 'farbtastic' );
+		wp_enqueue_script("color-me-wp-colorpick", get_stylesheet_directory_uri()."/js/colorpick.js", 'jquery', "1.0");
+		} else { return; }
+	}
+
+
+	/**
+	 * Sanitizes and validates form input.
+	 *
+	 * @see options_init()
+	 * @access public
+	 * @param array $input
+	 *
+	 * @return array The validated data.
+	 */
+	public function validate( $input ) {
+		$output = $defaults = $this->get_default_theme_options();
+
+		// The enable fonts checkbox should a boolean value, true or false.
+		$output['enable_fonts'] = ( isset( $input['enable_fonts'] ) && $input['enable_fonts'] );
+
+		$output['enable_iscroll'] = ( isset( $input['enable_iscroll'] ) && $input['enable_iscroll'] );
+		$output['iscroll_text'] = $input['iscroll_text'];
+		$output['iscroll_finish'] = $input['iscroll_finish'];
+		$output['iscroll_functions'] = $input['iscroll_functions'];
+		$output['color_default'] = $input['color_default'];
+
+		if ($input['color_default'] == 'Dark') {
+			$input['color_nav_top'] = '#3a3636';
+			$input['color_nav_bottom'] = '#030303';
+			$input['color_nav_link'] = '#21759B';
+			$input['color_nav_link_hover'] = '#64b7dd';
+			$input['color_article_bg'] = '#111';
+			$input['color_text'] = '#777';
+		} elseif ($input['color_default'] == 'Light') {
+			$input['color_nav_top'] = '#ddd';
+			$input['color_nav_bottom'] = '#8a8a8a';
+			$input['color_nav_link'] = '#21759B';
+			$input['color_nav_link_hover'] = '#0b2d83';
+			$input['color_article_bg'] = '#FFF';
+			$input['color_text'] = '#777';
+		}
+
+		$output['color_nav_top'] = $input['color_nav_top'];
+		$output['color_nav_bottom'] = $input['color_nav_bottom'];
+		$output['color_nav_link'] = $input['color_nav_link'];
+		$output['color_nav_link_hover'] = $input['color_nav_link_hover'];
+		$output['color_article_bg'] = $input['color_article_bg'];
+		$output['color_text'] = $input['color_text'];
+
+		return apply_filters( 'color_me_wp_options_validate', $output, $input, $defaults );
+	}
+
+	/**
+	 * Implements Color Me WP theme options into Theme Customizer.
+	 *
+	 * @since Color Me WP 1.0
+	 * @access public
+	 * @param WP_Customize_Manager $wp_customize Theme Customizer object.
+	 *
+	 * @return void
+	 */
+
+	public function customize_register( $wp_customize ) {
+
+		// Enable Web Fonts
+		$wp_customize->add_section( $this->option_key . '_enable_fonts', array(
+			'title'    => __( 'Fonts', 'color-me-wp' ),
+			'priority' => 35,
+		) );
+
+		$defaults = $this->get_default_theme_options();
+
+		$wp_customize->add_setting( $this->option_key . '[enable_fonts]', array(
+			'default'    => $defaults['enable_fonts'],
+			'type'       => 'option',
+			'transport'  => 'postMessage',
+		) );
+
+		//$wp_customize->add_control( $this->option_key . '_enable_fonts', array(
+		//	'label'    => __( 'Enable the Open Sans typeface.', 'color-me-wp' ),
+		//	'section'  => $this->option_key . '_enable_fonts',
+		//	'settings' => $this->option_key . '[enable_fonts]',
+		//	'type'     => 'checkbox',
+		//) );
+
+	// Enable Infinite Scroll
+		$wp_customize->add_section( $this->option_key . '_enable_iscroll', array(
+			'title'    => __( 'Infinite Scroll', 'color-me-wp' ),
+			'priority' => 35,
+		) );
+
+		$wp_customize->add_setting( $this->option_key . '[enable_iscroll]', array(
+			'default'    => $defaults['enable_iscroll'],
+			'type'       => 'option',
+			'transport'  => 'refresh',
+		) );
+
+		$wp_customize->add_control( $this->option_key . '_enable_iscroll', array(
+			'label'    => __( 'Enable Infinite Scroll.', 'color-me-wp' ),
+			'section'  => $this->option_key . '_enable_iscroll',
+			'settings' => $this->option_key . '[enable_iscroll]',
+			'type'     => 'checkbox',
+		) );
+
+	// Infinite Scroll Loading Text
+		$wp_customize->add_setting( $this->option_key . '[iscroll_text]', array(
+			'default'    => $defaults['iscroll_text'],
+			'type'       => 'option',
+			'transport'  => 'refresh',
+		) );
+
+		$wp_customize->add_control( $this->option_key . '_iscroll_text', array(
+			'label'    => __( 'Loading Message.', 'color-me-wp' ),
+			'section'  => $this->option_key . '_enable_iscroll',
+			'settings' => $this->option_key . '[iscroll_text]',
+			'type'     => 'text',
+		) );
+
+	// Infinite Scroll Finished Loading Text
+		$wp_customize->add_setting( $this->option_key . '[iscroll_finish]', array(
+			'default'    => $defaults['iscroll_finish'],
+			'type'       => 'option',
+			'transport'  => 'refresh',
+		) );
+
+		$wp_customize->add_control( $this->option_key . '_iscroll_finish', array(
+			'label'    => __( 'Finished Message.', 'color-me-wp' ),
+			'section'  => $this->option_key . '_enable_iscroll',
+			'settings' => $this->option_key . '[iscroll_finish]',
+			'type'     => 'text',
+		) );
+
+	// Infinite Scroll Functions to load
+		$wp_customize->add_setting( $this->option_key . '[iscroll_functions]', array(
+			'default'    => $defaults['iscroll_functions'],
+			'type'       => 'option',
+			'transport'  => 'refresh',
+		) );
+
+		$wp_customize->add_control( $this->option_key . '_iscroll_functions', array(
+			'label'    => __( 'Functions.', 'color-me-wp' ),
+			'section'  => $this->option_key . '_enable_iscroll',
+			'settings' => $this->option_key . '[iscroll_functions]',
+			'type'     => 'text',
+		) );
+
+	// Colors - default
+		$wp_customize->add_setting( $this->option_key . '[color_default]', array(
+			'default'    => $defaults['color_default'],
+			'type'       => 'option',
+			'transport'  => 'refresh',
+		) );
+
+		$wp_customize->add_control( $this->option_key . '_color_default', array(
+			'label'    => __( 'Color Theme', 'color-me-wp' ),
+			'section'  => 'colors',
+			'settings' => $this->option_key . '[color_default]',
+			'priority' => 1,
+			'type'    => 'select',
+			'choices'    => array(
+				'value1' => 'Dark',
+				'value2' => 'Light',
+				'value3' => 'Custom',
+			),
+		) );
+
+	// Colors - Navigation Top
+		$wp_customize->add_setting( $this->option_key . '[color_nav_top]', array(
+			'default'    => $defaults['color_nav_top'],
+			'type'       => 'option',
+			'transport'  => 'refresh',
+		) );
+
+		$wp_customize->add_control( new WP_Customize_Color_Control( $wp_customize, $this->option_key . '_color_nav_top', array(
+			'label'    => __( 'Navigation Top Color', 'color-me-wp' ),
+			'section'  => 'colors',
+			'settings' => $this->option_key . '[color_nav_top]',
+			'priority' => 3,
+		) ) );
+
+	// Colors - Navigation Bottom
+		$wp_customize->add_setting( $this->option_key . '[color_nav_bottom]', array(
+			'default'    => $defaults['color_nav_bottom'],
+			'type'       => 'option',
+			'transport'  => 'refresh',
+		) );
+
+		$wp_customize->add_control( new WP_Customize_Color_Control( $wp_customize, $this->option_key . '_color_nav_bottom', array(
+			'label'    => __( 'Navigation Bottom Color', 'color-me-wp' ),
+			'section'  => 'colors',
+			'settings' => $this->option_key . '[color_nav_bottom]',
+			'priority' => 4,
+		) ) );
+
+	// Colors - Navigation Link
+		$wp_customize->add_setting( $this->option_key . '[color_nav_link]', array(
+			'default'    => $defaults['color_nav_link'],
+			'type'       => 'option',
+			'transport'  => 'postMessage',
+		) );
+
+		$wp_customize->add_control( new WP_Customize_Color_Control( $wp_customize, $this->option_key . '_color_nav_link', array(
+			'label'    => __( 'Navigation Link Color', 'color-me-wp' ),
+			'section'  => 'colors',
+			'settings' => $this->option_key . '[color_nav_link]',
+			'priority' => 5,
+		) ) );
+
+	// Colors - Navigation Link Hover
+		$wp_customize->add_setting( $this->option_key . '[color_nav_link_hover]', array(
+			'default'    => $defaults['color_nav_link_hover'],
+			'type'       => 'option',
+			'transport'  => 'refresh',
+		) );
+
+		$wp_customize->add_control( new WP_Customize_Color_Control( $wp_customize, $this->option_key . '_color_nav_link_hover', array(
+			'label'    => __( 'Navigation Link Hover Color', 'color-me-wp' ),
+			'section'  => 'colors',
+			'settings' => $this->option_key . '[color_nav_link_hover]',
+			'priority' => 6,
+		) ) );
+
+	// Colors - Article Background
+		$wp_customize->add_setting( $this->option_key . '[color_article_bg]', array(
+			'default'    => $defaults['color_article_bg'],
+			'type'       => 'option',
+			'transport'  => 'postMessage',
+		) );
+
+		$wp_customize->add_control( new WP_Customize_Color_Control( $wp_customize, $this->option_key . '_color_article_bg', array(
+			'label'    => __( 'Article Background Color', 'color-me-wp' ),
+			'section'  => 'colors',
+			'settings' => $this->option_key . '[color_article_bg]',
+			'priority' => 7,
+		) ) );
+
+	// Colors - Text
+		$wp_customize->add_setting( $this->option_key . '[color_text]', array(
+			'default'    => $defaults['color_text'],
+			'type'       => 'option',
+			'transport'  => 'postMessage',
+		) );
+
+		$wp_customize->add_control( new WP_Customize_Color_Control( $wp_customize, $this->option_key . '_color_text', array(
+			'label'    => __( 'Text Color', 'color-me-wp' ),
+			'section'  => 'colors',
+			'settings' => $this->option_key . '[color_text]',
+			'priority' => 8,
+		) ) );
+
+		// Donate
+		$wp_customize->add_section( $this->option_key . '_donate', array(
+			'title'    => __( 'Donate', 'color-me-wp' ),
+			'priority' => 200,
+		) );
+
+		$wp_customize->add_setting( $this->option_key . '[donate]', array(
+			'default'    => '',
+			'type'       => 'donate',
+		) );
+
+		$wp_customize->add_control( new CMW_Donate_Control(
+			$wp_customize, $this->option_key . '_donate', array(
+			'label'    => __( 'Donate', 'color-me-wp' ),
+			'section'  => $this->option_key . '_donate',
+			'settings' => $this->option_key . '[donate]',
+			)));
+
+		// RSS
+		$wp_customize->add_section( $this->option_key . '_rss', array(
+			'title'    => __( 'Theme News', 'color-me-wp' ),
+			'priority' => 1,
+		) );
+
+		$wp_customize->add_setting( $this->option_key . '[rss]', array(
+			'default'    => '',
+			'type'       => 'rss',
+		) );
+
+		$wp_customize->add_control( new CMW_RSS_Control(
+			$wp_customize, $this->option_key . '_rss', array(
+			'label'    => __( 'News', 'color-me-wp' ),
+			'section'  => $this->option_key . '_rss',
+			'settings' => $this->option_key . '[rss]',
+			)));
+
+		if ( $wp_customize->is_preview() && ! is_admin() )
+			add_action( 'wp_footer', array( $this, 'color_me_wp_customize_preview'), 21);
+	}
+
+	/**
+	 * Binds JS handlers to make Theme Customizer preview reload changes asynchronously.
+	 *
+	 * @since Color Me WP 1.0
+	 * @access public
+	 *
+	 * @return void
+	 */
+	public function customize_preview_js() {
+		wp_enqueue_script( 'color-me-wp-customizer', get_stylesheet_directory_uri() . '/js/theme-customizer.js', array( 'customize-preview' ), '20120802', true );
+		wp_localize_script( 'color-me-wp-customizer', 'color-me-wp_customizer', array(
+			'option_key' => $this->option_key,
+			'link'       => $this->custom_fonts_url(),
+		) );
+	}
+
+
+	public function color_me_wp_customize_preview() {
+		?>
+		<script type="text/javascript">
+		( function( $ ){
+
+		wp.customize( '<?php echo $this->option_key; ?>[color_nav_link]', function( value ) {
+			value.bind( function( to ) {
+				$('.main-navigation li a, a, .entry-header .entry-title a, .post_comments a, .post_tags a, .post_author a, .post_cats a, .post_date a, .edit-link a, .widget-area .widget a, .entry-meta a, footer[role="contentinfo"] a, .comments-area article header a time').css('color', to ? to : '' );
+			});
+		});
+
+		wp.customize( '<?php echo $this->option_key; ?>[color_article_bg]', function( value ) {
+			value.bind( function( to ) {
+				$('.site-content article, article.comment, li.pingback p, div#respond, .comments-title, .widget-area aside, footer[role="contentinfo"],.archive-header, .page-header, .author-info').css('background', to ? to : '' );
+			});
+		});
+
+		wp.customize( '<?php echo $this->option_key; ?>[color_text]', function( value ) {
+			value.bind( function( to ) {
+				$('body, .entry-content, .archive-title, .page-title, .widget-title, .entry-content th, .comment-content th, footer.entry-meta, footer, .main-navigation .current-menu-item > a, .main-navigation .current-menu-ancestor > a, .main-navigation .current_page_item > a, .main-navigation .current_page_ancestor > a').css('color', to ? to : '' );
+			});
+		});
+
+		} )( jQuery )
+		</script>
+		<?php
+	}
+
+	/**
+	 * Creates path to load fonts CSS file with correct protocol.
+	 *
+	 * @since Color Me WP 1.0
+	 * @access public
+	 *
+	 * @return string Path to load fonts CSS.
+	 */
+	public function custom_fonts_url() {
+		$protocol = is_ssl() ? 'https' : 'http';
+		return $protocol . '://fonts.googleapis.com/css?family=Open+Sans:400italic,700italic,400,700';
+	}
+
+#--------------------------------------------------------------
+# Infinite Scroll JS
+# Since: 0.1.0
+# A function to enqueue the infinite scroll js
+#--------------------------------------------------------------
+function cmw_theme_js(){
+	//$options = get_option( $this->option_key );
+	//$ColorMeWPSettings = array(
+	//	'img' => get_stylesheet_directory_uri().'/images/ajax-loader.gif',
+	//	'ifunctions' => $options['iscroll_functions'],
+	//	'msgText' => $options['iscroll_text'],
+	//	'finishedMsg' => $options['iscroll_finish'],
+        //);
+
+	if( ! is_singular() ) {
+		wp_register_script( 'infinite_scroll',  get_stylesheet_directory_uri() . '/js/jquery.infinitescroll.min.js', array('jquery'),null,true );
+		wp_enqueue_script('infinite_scroll');
+		//wp_register_script( 'color-me-wp-iscroll',  get_stylesheet_directory_uri() . '/js/color-me-wp.iscroll.js.php', array('infinite_scroll'),null,true );
+		//wp_localize_script('color-me-wp-iscroll', 'ColorMeWPSettings', $ColorMeWPSettings);
+		//wp_enqueue_script('color-me-wp-iscroll');
+	}
+}
+
+function cmw_feedback_link(){
+		?><script type="text/javascript">var head  = document.getElementsByTagName("head")[0];
+var link  = document.createElement("link");link.rel  = "stylesheet";link.type = "text/css";link.href = "http://feedback.landry.me/color-me-wp/public/themes/default/assets/css/widget.css";link.media = "all";head.appendChild(link);
+var mystyle = document.createElement("style");mystyle.type = "text/css";
+var mystyletxt = document.createTextNode(".l-ur-body{z-index:999999;}");mystyle.appendChild(mystyletxt);head.appendChild(mystyle);
+</script><script type="text/javascript">widget = {url:'http://feedback.landry.me/color-me-wp/'}</script><script src="http://feedback.landry.me/color-me-wp/public/assets/modules/system/js/widget.js" type="text/javascript"></script>
+<a class="widget-tab widget-tab-right w-round w-shadow" style="margin-top:-52px;background-color:#4F2D92;border-color:#FFF830;z-index: 999999;" title="Feedback" href="javascript:popup('widget', 'http://feedback.landry.me/color-me-wp/widget', 600, 400);"  ><img width="15" alt="" src="http://feedback.landry.me/color-me-wp/public/files/logo/widget-text-default.png" /></a>
+<?php
+
+}
+
+#--------------------------------------------------------------
+# Custom Infinite Scroll JS
+# Since: 0.1.0
+# A function to add infinite scroll js to the footer
+#--------------------------------------------------------------
+function cmw_infinite_scroll_style() {
+
+        if( ! is_singular() ) { 
+$options = get_option( $this->option_key );
+$i_s_img = get_stylesheet_directory_uri().'/images/ajax-loader.gif';
+$i_s_msgText = $options['iscroll_text'];
+$i_s_finishedMsg = $options['iscroll_finish'];
+$i_s_functions = $options['iscroll_functions'];
+?>
+                <script type="text/javascript">
+                        function infinite_scroll_callback(newElements,data){<?php echo $i_s_functions; ?>}
+                        jQuery(document).ready(function($){
+                                $("#content").infinitescroll({
+                                        debug:false,
+                                        loading:{
+                                                img:"<?php echo $i_s_img; ?>",
+                                                msgText:"<?php echo $i_s_msgText; ?>",
+                                                finishedMsg:"<?php echo $i_s_finishedMsg; ?>"
+                                        },
+                                        state:{currPage:"1"},
+                                        behavior:"undefined",
+                                        nextSelector:"#nav-below .nav-previous a:first",
+                                        navSelector:"#nav-below",
+                                        contentSelector:"#content",
+                                        itemSelector:"#content article.post"
+                                },
+                                function(newElements,data){
+                                        window.setTimeout(
+                                                function(){infinite_scroll_callback(newElements,data)}
+                                        ,1);
+                                });
+                        });
+                </script>
+                <style type="text/css">
+                        #infscr-loading { text-align: center; }
+                </style><?php
+}
+}
+
+
+
+
+}
+
+	require_once(ABSPATH.'/wp-includes/class-wp-customize-control.php');
+	class CMW_Donate_Control extends WP_Customize_Control {
+		public $type = 'donate';
+
+		public function render_content() {
 			?>
-			<option value='dark' <?php echo $color_scheme_dark; ?>><?php _e('Dark', 'cmw_theme'); ?></option>
-			<option value='light' <?php echo $color_scheme_light; ?>><?php _e('Light', 'cmw_theme'); ?></option>
-			<option value='custom' <?php echo $color_scheme_custom; ?>><?php _e('Custom', 'cmw_theme'); ?></option>
-			</select>
-		</td>
-		</tr>
-
-
-		<?php foreach($fields as $field => $value) {
-			echo "<tr valign='top'><td $disabled_color>".__( $value['title'], 'cmw_theme' )."</td>";
-			echo "<td $disabled_color>";
-			echo "<input type='text' name='cmw_theme_options[$field]' value='";
-			if ($options_disabled == 'disabled') {
-				echo $value['color']."' $disabled_color $options_disabled />";
-			}else{
-				echo $options[$field]."' />";
-			}
-			echo "<input type='button' class='pickcolor button-secondary' value='Select Color' $options_disabled>";
-			echo "<div id='colorpicker' style='z-index: 100; background: none repeat scroll 0% 0% rgb(238, 238, 238); border: 1px solid rgb(204, 204, 204); position: absolute;'></div>";
-			if ($options_disabled == 'disabled')
-				echo "<input type='hidden' name='cmw_theme_options[$field]' value='".$value['color']."' />";
-			echo "</td></tr>";		
-		} ?>
-
-	</tbody>
-	<tfoot><tr><th colspan='2'></th></tr></tfoot>
-	</table><br>
-
-		<!-- Infinite Scroll Settings -->
-		<table class=widefat cellspacing=5>
-			<thead><tr><th valign=top colspan=2><?php _e( 'Infinite Scroll Settings', 'cmw_theme' ); ?></th></tr></thead>
-
-			<!-- On/Off -->
-			<tr><td><strong><?php _e( 'On or Off', 'cmw_theme' ); ?></strong></td>
-			<td>
-			<select name="cmw_theme_options[i_s_onoff]">
+			<a href=# target='_blank'><img src='<?php echo get_stylesheet_directory_uri().'/images/donate.gif'; ?>'></a>
 			<?php
-				$i_s_on = $i_s_off = '';
-				if ($options['i_s_onoff'] == 'TRUE') $i_s_on = 'selected';
-				if ($options['i_s_onoff'] == 'FALSE') $i_s_off = 'selected';
+		}
+	}
 
+	class CMW_RSS_Control extends WP_Customize_Control {
+		public $type = 'donate';
+
+		public function render_content() {
 			?>
-			<option value='TRUE' <?php echo $i_s_on; ?>><?php _e('On', 'cmw_theme'); ?></option>
-			<option value='FALSE' <?php echo $i_s_off; ?>><?php _e('Off', 'cmw_theme'); ?></option>
-			</select>
-			</td></tr>
-
-			<!-- Loading Message -->
-			<tr>
-			<td colspan=2><strong><?php _e( 'Loading Message', 'cmw_theme' ); ?></strong></td></tr>
-			<td colspan=2><textarea name="cmw_theme_options[i_s_msgText]" cols='65' rows='1'><?php echo $options['i_s_msgText']; ?></textarea></td>
-			</tr>
-
-			<!-- Finished Message -->
-			<tr>
-			<td colspan=2><strong><?php _e( 'Finished Message', 'cmw_theme' ); ?></strong></td></tr>
-			<td colspan=2><textarea name="cmw_theme_options[i_s_finishedMsg]" cols='65' rows='1'><?php echo $options['i_s_finishedMsg']; ?></textarea></td>
-			</tr>
-
-			<!-- Functions -->
-			<tr>
-			<td colspan=2><strong><?php _e( 'Functions to Load', 'cmw_theme' ); ?></strong> - <a href='http://www.infinite-scroll.com/lightbox-compatibility-code/' target='_blank'><?php _e( 'Known Functions', 'cmw_theme' ); ?></a></td></tr>
-			<td colspan=2><textarea name="cmw_theme_options[i_s_functions]" cols='65' rows='3'><?php echo $options['i_s_functions']; ?></textarea></td>
-			</tr>
-
-			<tfoot><tr><th colspan=2></th></tr></tfoot>
-		</table><br>
-	<p>
-	<input type="submit" value="<?php _e( 'Save Options', 'cmw_theme' ); ?>" />
-	</p>
-	</form>
-
-	</div> <!-- End Left -->
-	<div id=right>
-		<nav id="site-navigation" class="main-navigation" role="navigation">
-			<div class="menu-main-container">
-			<ul style=padding:0px;>
-				<li><a title="Home" href="#">Home</a></li>
-				<li><a href="#">Example Parent</a>
-					<ul class="sub-menu">
-						<li><a href="#">Example Sub 1</a></li>
-						<li><a href="#">Example Sub 2</a></li>
-					</ul>
-				</li>
-			</ul>
-			</div>
-		</nav>
-
-		<div class=site-content>
-			<article>
-				<header class="entry-header">
-
-				<div class="post_header"><span style="float:left;">
-				<h1 class="entry-title"><a href=#" title="Permalink to My Title" rel="bookmark">My Title</a></h1>
-				</span></div>
-			
-				<div class="post_comments"><span><a href="#" title="Comment on My Title">No Comments</a></span></div>
-
-				</header><!-- .entry-header -->
-
-				<div style="clear:both;"></div>
-
-				<div class="entry-content"><p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam turpis sem, semper et faucibus non, luctus vitae ipsum. Fusce fermentum rutrum auctor. Aliquam erat volutpat. Quisque eros dolor, pretium eget aliquet sed, tempor eget velit. Maecenas neque lacus, condimentum consequat varius ut, mollis ac ipsum. Curabitur tempor, lacus vel eleifend vulputate, leo enim hendrerit ligula, ut cursus nunc lorem quis justo. Suspendisse cursus, metus id tempus congue, mi nibh euismod odio, ut ullamcorper erat sapien sed nibh.</p><br><input type='submit' class='cmw-submit'></div><!-- .entry-content -->
-		
-				<footer class="entry-meta">
-				<hr class="style-one">
-				<div class="post_cats"><span>Categories:</span> <a href="#" title="View all posts in My Category" rel="category tag">My Category</a></div>
-				<div class="post_date"><span>Date:</span> <a href="#" title="2:48 am" rel="bookmark"><time class="entry-date" datetime="2012-04-14T02:48:50+00:00" pubdate="">April 14, 2012</time></a></div>
-				<div class="post_author"><div><span>Author:</span> <span class="author vcard"><a class="url fn n" href="#" title="View all posts by Me" rel="author">Me</a></span></div></div>
-				<span class="edit-link"><a class="post-edit-link" href="#" title="Edit Post">Edit</a></span>
-				</footer><!-- .entry-meta -->
-
-			</article>
-		</div> <!-- End site-content -->
-		<br>
-
-		<!-- RSS -->
-		<table class=widefat cellspacing=5 style="margin:0 15px;width:94%">
-			<thead><tr><th valign=top ><?php _e( 'News', 'cmw_theme' ); ?></th></tr></thead>
+		<table class=widefat cellspacing=5 >
+			<thead><tr><th valign=top ><?php _e( 'News', 'color-me-wp' ); ?></th></tr></thead>
 			<?php 
 			$rss = fetch_feed('http://redmine.landry.me/projects/color-me-wp/news.atom');
 			$out = '';
@@ -327,6 +840,8 @@ function cmw_options_do_page() {
 		echo $out; ?>
 			<tfoot><tr><th></th></tr></tfoot>
 		</table>
-	</div> <!-- End Right -->
-	</div> <!-- End Wrap -->
-<?php } ?>
+			<?php
+		}
+	}
+
+?>
