@@ -1,7 +1,8 @@
 <?php
-//Header("content-type: application/x-javascript");
-header("Content-type: text/javascript");
-require_once($_SERVER['DOCUMENT_ROOT'].'/wp-blog-header.php');
+Header("content-type: application/x-javascript");
+//header("Content-type: text/javascript");
+require_once($_SERVER['DOCUMENT_ROOT'].'/wp-load.php');
+require_once(get_stylesheet_directory().'/inc/theme-options.php');
 $color_me_wp_options = new Color_Me_WP_Options();
 $options = get_option( $color_me_wp_options->option_key );
 $i_s_img = get_stylesheet_directory_uri().'/images/ajax-loader.gif';

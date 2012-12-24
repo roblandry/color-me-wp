@@ -20,9 +20,12 @@
 	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 	// Load up our theme options page and related code.
+
 global $color_me_wp_options;
 require( get_stylesheet_directory() . '/inc/theme-options.php' );
 $color_me_wp_options = new Color_Me_WP_Options();
+
+
 #--------------------------------------------------------------
 # Dequeue Fonts
 # Since: 0.1.0
@@ -83,7 +86,6 @@ function color_me_wp_setup() {
     	 */
      	load_theme_textdomain( 'color-me-wp', get_template_directory() . '/languages' );
      
-
  	// This theme styles the visual editor with editor-style.css to match the theme style.
      	add_editor_style();
 }
@@ -113,7 +115,7 @@ function cmw_wp_head() {
 		.main-navigation li a:hover {
 			color: ".$new_options['color_nav_link_hover'].";
 		}
-		.site-content article, article.comment, li.pingback p, div#respond, .comments-title, .widget-area aside, footer[role='contentinfo'],.archive-header, .page-header, .author-info {
+		.site-content article, article.comment, li.pingback p, li.trackback p, div#respond, .comments-title, .widget-area aside, footer[role='contentinfo'],.archive-header, .page-header, .author-info {
 			background: ".$new_options['color_article_bg'].";
 		}
 		a, .entry-header .entry-title a, .post_comments a, .post_tags a, .post_author a, .post_cats a, .post_date a, .edit-link a, .widget-area .widget a, .entry-meta a, footer[role='contentinfo'] a, .comments-area article header a time {
@@ -145,6 +147,22 @@ function cmw_wp_head() {
 }
 add_action('wp_head', 'cmw_wp_head');
 
+
+function color_me_wp_styles()  
+{ 
+  // Register the style like this for a theme:  
+  // (First the unique name for the style (custom-style) then the src, 
+  // then dependencies and ver no. and media type)
+  wp_register_style( 'color-me-wp-style', 
+    get_stylesheet_directory_uri() . '/css/theme-options.css.php', 
+    array(), 
+    '20120208', 
+    'all' );
+
+  // enqueing:
+  wp_enqueue_style( 'color-me-wp-style' );
+}
+//add_action('wp_enqueue_scripts', 'color_me_wp_styles');
 
 #--------------------------------------------------------------
 # TwentyTwelve Entry Meta

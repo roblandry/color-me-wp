@@ -52,7 +52,7 @@ class Color_Me_WP_Options {
 
 		if (strpos($script, 'customize.php') !== false || strpos($script, 'themes.php') !== false) {
 			//add_action( 'admin_header', array( $this, 'cmw_feedback_link' ) );
-			echo $this::cmw_feedback_link();
+			echo self::cmw_feedback_link();
 		}
 	}
 
@@ -160,7 +160,6 @@ class Color_Me_WP_Options {
 			'color_text' => '#777',
 			// \Added
 		);
-
 		return apply_filters( 'color_me_wp_default_theme_options', $default_theme_options );
 	}
 
@@ -352,17 +351,23 @@ class Color_Me_WP_Options {
 	}
 
 
-
+	/**
+	 * Enqueues the Admin Scripts.
+	 *
+	 * @access public
+	 *
+	 * @return void
+	 */
 	public function color_me_wp_admin_scripts() {
 		if (isset($_GET['page']) && $_GET['page'] == 'theme_options') {
 
 		wp_enqueue_style( 'farbtastic' );
-		wp_enqueue_style( 'customize-controls' );
-		wp_enqueue_script( 'customize-controls' );
-		wp_enqueue_script( 'underscore' );
-		wp_enqueue_script( 'backbone' );
-		wp_enqueue_script( 'farbtastic' );
-		wp_enqueue_script("color-me-wp-colorpick", get_stylesheet_directory_uri()."/js/colorpick.js", 'jquery', "1.0");
+		//wp_enqueue_style( 'customize-controls' );
+		//wp_enqueue_script( 'customize-controls' );
+		//wp_enqueue_script( 'underscore' );
+		//wp_enqueue_script( 'backbone' );
+		//wp_enqueue_script( 'farbtastic' );
+		//wp_enqueue_script("color-me-wp-colorpick", get_stylesheet_directory_uri()."/js/colorpick.js", 'jquery', "1.0");
 		} else { return; }
 	}
 
@@ -381,29 +386,11 @@ class Color_Me_WP_Options {
 
 		// The enable fonts checkbox should a boolean value, true or false.
 		$output['enable_fonts'] = ( isset( $input['enable_fonts'] ) && $input['enable_fonts'] );
-
 		$output['enable_iscroll'] = ( isset( $input['enable_iscroll'] ) && $input['enable_iscroll'] );
 		$output['iscroll_text'] = $input['iscroll_text'];
 		$output['iscroll_finish'] = $input['iscroll_finish'];
 		$output['iscroll_functions'] = $input['iscroll_functions'];
 		$output['color_default'] = $input['color_default'];
-
-		if ($input['color_default'] == 'Dark') {
-			$input['color_nav_top'] = '#3a3636';
-			$input['color_nav_bottom'] = '#030303';
-			$input['color_nav_link'] = '#21759B';
-			$input['color_nav_link_hover'] = '#64b7dd';
-			$input['color_article_bg'] = '#111';
-			$input['color_text'] = '#777';
-		} elseif ($input['color_default'] == 'Light') {
-			$input['color_nav_top'] = '#ddd';
-			$input['color_nav_bottom'] = '#8a8a8a';
-			$input['color_nav_link'] = '#21759B';
-			$input['color_nav_link_hover'] = '#0b2d83';
-			$input['color_article_bg'] = '#FFF';
-			$input['color_text'] = '#777';
-		}
-
 		$output['color_nav_top'] = $input['color_nav_top'];
 		$output['color_nav_bottom'] = $input['color_nav_bottom'];
 		$output['color_nav_link'] = $input['color_nav_link'];
@@ -427,27 +414,27 @@ class Color_Me_WP_Options {
 	public function customize_register( $wp_customize ) {
 
 		// Enable Web Fonts
-		$wp_customize->add_section( $this->option_key . '_enable_fonts', array(
+		/*$wp_customize->add_section( $this->option_key . '_enable_fonts', array(
 			'title'    => __( 'Fonts', 'color-me-wp' ),
 			'priority' => 35,
-		) );
+		) );*/
 
 		$defaults = $this->get_default_theme_options();
 
-		$wp_customize->add_setting( $this->option_key . '[enable_fonts]', array(
+		/*$wp_customize->add_setting( $this->option_key . '[enable_fonts]', array(
 			'default'    => $defaults['enable_fonts'],
 			'type'       => 'option',
 			'transport'  => 'postMessage',
 		) );
 
-		//$wp_customize->add_control( $this->option_key . '_enable_fonts', array(
-		//	'label'    => __( 'Enable the Open Sans typeface.', 'color-me-wp' ),
-		//	'section'  => $this->option_key . '_enable_fonts',
-		//	'settings' => $this->option_key . '[enable_fonts]',
-		//	'type'     => 'checkbox',
-		//) );
+		$wp_customize->add_control( $this->option_key . '_enable_fonts', array(
+			'label'    => __( 'Enable the Open Sans typeface.', 'color-me-wp' ),
+			'section'  => $this->option_key . '_enable_fonts',
+			'settings' => $this->option_key . '[enable_fonts]',
+			'type'     => 'checkbox',
+		) );*/
 
-	// Enable Infinite Scroll
+		// Enable Infinite Scroll
 		$wp_customize->add_section( $this->option_key . '_enable_iscroll', array(
 			'title'    => __( 'Infinite Scroll', 'color-me-wp' ),
 			'priority' => 35,
@@ -466,7 +453,7 @@ class Color_Me_WP_Options {
 			'type'     => 'checkbox',
 		) );
 
-	// Infinite Scroll Loading Text
+		// Infinite Scroll Loading Text
 		$wp_customize->add_setting( $this->option_key . '[iscroll_text]', array(
 			'default'    => $defaults['iscroll_text'],
 			'type'       => 'option',
@@ -480,7 +467,7 @@ class Color_Me_WP_Options {
 			'type'     => 'text',
 		) );
 
-	// Infinite Scroll Finished Loading Text
+		// Infinite Scroll Finished Loading Text
 		$wp_customize->add_setting( $this->option_key . '[iscroll_finish]', array(
 			'default'    => $defaults['iscroll_finish'],
 			'type'       => 'option',
@@ -494,7 +481,7 @@ class Color_Me_WP_Options {
 			'type'     => 'text',
 		) );
 
-	// Infinite Scroll Functions to load
+		// Infinite Scroll Functions to load
 		$wp_customize->add_setting( $this->option_key . '[iscroll_functions]', array(
 			'default'    => $defaults['iscroll_functions'],
 			'type'       => 'option',
@@ -508,8 +495,8 @@ class Color_Me_WP_Options {
 			'type'     => 'text',
 		) );
 
-	// Colors - default
-		$wp_customize->add_setting( $this->option_key . '[color_default]', array(
+		// Colors - default
+		/*$wp_customize->add_setting( $this->option_key . '[color_default]', array(
 			'default'    => $defaults['color_default'],
 			'type'       => 'option',
 			'transport'  => 'refresh',
@@ -526,9 +513,9 @@ class Color_Me_WP_Options {
 				'value2' => 'Light',
 				'value3' => 'Custom',
 			),
-		) );
+		) );*/
 
-	// Colors - Navigation Top
+		// Colors - Navigation Top
 		$wp_customize->add_setting( $this->option_key . '[color_nav_top]', array(
 			'default'    => $defaults['color_nav_top'],
 			'type'       => 'option',
@@ -542,7 +529,7 @@ class Color_Me_WP_Options {
 			'priority' => 3,
 		) ) );
 
-	// Colors - Navigation Bottom
+		// Colors - Navigation Bottom
 		$wp_customize->add_setting( $this->option_key . '[color_nav_bottom]', array(
 			'default'    => $defaults['color_nav_bottom'],
 			'type'       => 'option',
@@ -556,7 +543,7 @@ class Color_Me_WP_Options {
 			'priority' => 4,
 		) ) );
 
-	// Colors - Navigation Link
+		// Colors - Navigation Link
 		$wp_customize->add_setting( $this->option_key . '[color_nav_link]', array(
 			'default'    => $defaults['color_nav_link'],
 			'type'       => 'option',
@@ -570,7 +557,7 @@ class Color_Me_WP_Options {
 			'priority' => 5,
 		) ) );
 
-	// Colors - Navigation Link Hover
+		// Colors - Navigation Link Hover
 		$wp_customize->add_setting( $this->option_key . '[color_nav_link_hover]', array(
 			'default'    => $defaults['color_nav_link_hover'],
 			'type'       => 'option',
@@ -584,7 +571,7 @@ class Color_Me_WP_Options {
 			'priority' => 6,
 		) ) );
 
-	// Colors - Article Background
+		// Colors - Article Background
 		$wp_customize->add_setting( $this->option_key . '[color_article_bg]', array(
 			'default'    => $defaults['color_article_bg'],
 			'type'       => 'option',
@@ -598,7 +585,7 @@ class Color_Me_WP_Options {
 			'priority' => 7,
 		) ) );
 
-	// Colors - Text
+		// Colors - Text
 		$wp_customize->add_setting( $this->option_key . '[color_text]', array(
 			'default'    => $defaults['color_text'],
 			'type'       => 'option',
@@ -652,6 +639,7 @@ class Color_Me_WP_Options {
 			add_action( 'wp_footer', array( $this, 'color_me_wp_customize_preview'), 21);
 	}
 
+
 	/**
 	 * Binds JS handlers to make Theme Customizer preview reload changes asynchronously.
 	 *
@@ -669,6 +657,14 @@ class Color_Me_WP_Options {
 	}
 
 
+	/**
+	 * Binds JS handlers to make Theme Customizer preview reload changes asynchronously.
+	 *
+	 * @since Color Me WP 1.0
+	 * @access public
+	 *
+	 * @return void
+	 */
 	public function color_me_wp_customize_preview() {
 		?>
 		<script type="text/javascript">
@@ -682,7 +678,7 @@ class Color_Me_WP_Options {
 
 		wp.customize( '<?php echo $this->option_key; ?>[color_article_bg]', function( value ) {
 			value.bind( function( to ) {
-				$('.site-content article, article.comment, li.pingback p, div#respond, .comments-title, .widget-area aside, footer[role="contentinfo"],.archive-header, .page-header, .author-info').css('background', to ? to : '' );
+				$('.site-content article, article.comment, li.pingback p, li.trackback p, div#respond, .comments-title, .widget-area aside, footer[role="contentinfo"],.archive-header, .page-header, .author-info').css('background', to ? to : '' );
 			});
 		});
 
@@ -697,6 +693,7 @@ class Color_Me_WP_Options {
 		<?php
 	}
 
+
 	/**
 	 * Creates path to load fonts CSS file with correct protocol.
 	 *
@@ -710,105 +707,107 @@ class Color_Me_WP_Options {
 		return $protocol . '://fonts.googleapis.com/css?family=Open+Sans:400italic,700italic,400,700';
 	}
 
-#--------------------------------------------------------------
-# Infinite Scroll JS
-# Since: 0.1.0
-# A function to enqueue the infinite scroll js
-#--------------------------------------------------------------
-function cmw_theme_js(){
-	//$options = get_option( $this->option_key );
-	//$ColorMeWPSettings = array(
-	//	'img' => get_stylesheet_directory_uri().'/images/ajax-loader.gif',
-	//	'ifunctions' => $options['iscroll_functions'],
-	//	'msgText' => $options['iscroll_text'],
-	//	'finishedMsg' => $options['iscroll_finish'],
-        //);
 
-	if( ! is_singular() ) {
-		wp_register_script( 'infinite_scroll',  get_stylesheet_directory_uri() . '/js/jquery.infinitescroll.min.js', array('jquery'),null,true );
-		wp_enqueue_script('infinite_scroll');
-		//wp_register_script( 'color-me-wp-iscroll',  get_stylesheet_directory_uri() . '/js/color-me-wp.iscroll.js.php', array('infinite_scroll'),null,true );
-		//wp_localize_script('color-me-wp-iscroll', 'ColorMeWPSettings', $ColorMeWPSettings);
-		//wp_enqueue_script('color-me-wp-iscroll');
+	/**
+	 * Enqueue the infinite scroll js.
+	 *
+	 * @since Color Me WP 1.0
+	 * @access public
+	 *
+	 * @return void
+	 */
+	function cmw_theme_js(){
+		if( ! is_singular() ) {
+			wp_register_script( 'infinite_scroll',  get_stylesheet_directory_uri() . '/js/jquery.infinitescroll.min.js', array('jquery'),null,true );
+			wp_enqueue_script('infinite_scroll');
+		}
+		//wp_register_script( 'infinite_scroll_js',  get_stylesheet_directory_uri() . '/js/color-me-wp.iscroll.js.php', array('infinite_scroll'),null,true );
+		//wp_enqueue_script('infinite_scroll_js');
 	}
-}
-
-function cmw_feedback_link(){
-		?><script type="text/javascript">var head  = document.getElementsByTagName("head")[0];
-var link  = document.createElement("link");link.rel  = "stylesheet";link.type = "text/css";link.href = "http://feedback.landry.me/color-me-wp/public/themes/default/assets/css/widget.css";link.media = "all";head.appendChild(link);
-var mystyle = document.createElement("style");mystyle.type = "text/css";
-var mystyletxt = document.createTextNode(".l-ur-body{z-index:999999;}");mystyle.appendChild(mystyletxt);head.appendChild(mystyle);
-</script><script type="text/javascript">widget = {url:'http://feedback.landry.me/color-me-wp/'}</script><script src="http://feedback.landry.me/color-me-wp/public/assets/modules/system/js/widget.js" type="text/javascript"></script>
-<a class="widget-tab widget-tab-right w-round w-shadow" style="margin-top:-52px;background-color:#4F2D92;border-color:#FFF830;z-index: 999999;" title="Feedback" href="javascript:popup('widget', 'http://feedback.landry.me/color-me-wp/widget', 600, 400);"  ><img width="15" alt="" src="http://feedback.landry.me/color-me-wp/public/files/logo/widget-text-default.png" /></a>
-<?php
-
-}
-
-#--------------------------------------------------------------
-# Custom Infinite Scroll JS
-# Since: 0.1.0
-# A function to add infinite scroll js to the footer
-#--------------------------------------------------------------
-function cmw_infinite_scroll_style() {
-
-        if( ! is_singular() ) { 
-$options = get_option( $this->option_key );
-$i_s_img = get_stylesheet_directory_uri().'/images/ajax-loader.gif';
-$i_s_msgText = $options['iscroll_text'];
-$i_s_finishedMsg = $options['iscroll_finish'];
-$i_s_functions = $options['iscroll_functions'];
-?>
-                <script type="text/javascript">
-                        function infinite_scroll_callback(newElements,data){<?php echo $i_s_functions; ?>}
-                        jQuery(document).ready(function($){
-                                $("#content").infinitescroll({
-                                        debug:false,
-                                        loading:{
-                                                img:"<?php echo $i_s_img; ?>",
-                                                msgText:"<?php echo $i_s_msgText; ?>",
-                                                finishedMsg:"<?php echo $i_s_finishedMsg; ?>"
-                                        },
-                                        state:{currPage:"1"},
-                                        behavior:"undefined",
-                                        nextSelector:"#nav-below .nav-previous a:first",
-                                        navSelector:"#nav-below",
-                                        contentSelector:"#content",
-                                        itemSelector:"#content article.post"
-                                },
-                                function(newElements,data){
-                                        window.setTimeout(
-                                                function(){infinite_scroll_callback(newElements,data)}
-                                        ,1);
-                                });
-                        });
-                </script>
-                <style type="text/css">
-                        #infscr-loading { text-align: center; }
-                </style><?php
-}
-}
 
 
+	/**
+	 * Create the Feedback Link.
+	 *
+	 * @since Color Me WP 1.0
+	 * @access public
+	 *
+	 * @return void
+	 */
+	function cmw_feedback_link() { ?>
+		<script type="text/javascript">
+			var head  = document.getElementsByTagName("head")[0];
+			var link  = document.createElement("link");link.rel  = "stylesheet";link.type = "text/css";link.href = "http://feedback.landry.me/color-me-wp/public/themes/default/assets/css/widget.css";link.media = "all";head.appendChild(link);
+			var mystyle = document.createElement("style");mystyle.type = "text/css";
+			var mystyletxt = document.createTextNode(".l-ur-body{z-index:999999;}");mystyle.appendChild(mystyletxt);head.appendChild(mystyle);
+		</script>
+		<script type="text/javascript">widget = {url:'http://feedback.landry.me/color-me-wp/'}</script>
+		<script src="http://feedback.landry.me/color-me-wp/public/assets/modules/system/js/widget.js" type="text/javascript"></script>
+		<a class="widget-tab widget-tab-right w-round w-shadow" style="margin-top:-52px;background-color:#4F2D92;border-color:#FFF830;z-index: 999999;" title="Feedback" href="javascript:popup('widget', 'http://feedback.landry.me/color-me-wp/widget', 600, 400);"  ><img width="15" alt="" src="http://feedback.landry.me/color-me-wp/public/files/logo/widget-text-default.png" /></a><?php
+	}
 
+	/**
+	 * The infinite scroll js.
+	 *
+	 * @since Color Me WP 1.0
+	 * @access public
+	 *
+	 * @return void
+	 */
+	function cmw_infinite_scroll_style() {
 
-}
-
-	require_once(ABSPATH.'/wp-includes/class-wp-customize-control.php');
-	class CMW_Donate_Control extends WP_Customize_Control {
-		public $type = 'donate';
-
-		public function render_content() {
-			?>
-			<a href=# target='_blank'><img src='<?php echo get_stylesheet_directory_uri().'/images/donate.gif'; ?>'></a>
-			<?php
+	        if( ! is_singular() ) { 
+			$options = get_option( $this->option_key );
+			$i_s_img = get_stylesheet_directory_uri().'/images/ajax-loader.gif';
+			$i_s_msgText = $options['iscroll_text'];
+			$i_s_finishedMsg = $options['iscroll_finish'];
+			$i_s_functions = $options['iscroll_functions']; ?>
+	                <script type="text/javascript">
+	                        function infinite_scroll_callback(newElements,data){<?php echo $i_s_functions; ?>}
+	                        jQuery(document).ready(function($){
+	                                $("#content").infinitescroll({
+	                                        debug:false,
+	                                        loading:{
+	                                                img:"<?php echo $i_s_img; ?>",
+	                                                msgText:"<?php echo $i_s_msgText; ?>",
+	                                                finishedMsg:"<?php echo $i_s_finishedMsg; ?>"
+	                                        },
+	                                        state:{currPage:"1"},
+	                                        behavior:"undefined",
+	                                        nextSelector:"#nav-below .nav-previous a:first",
+	                                        navSelector:"#nav-below",
+	                                        contentSelector:"#content",
+	                                        itemSelector:"#content article.post"
+	                                },
+	                                function(newElements,data){
+	                                        window.setTimeout(
+	                                                function(){infinite_scroll_callback(newElements,data)}
+	                                        ,1);
+	                                });
+	                        });
+	                </script>
+	                <style type="text/css">
+	                        #infscr-loading { text-align: center; }
+	                </style><?php
 		}
 	}
+} # End Class
 
-	class CMW_RSS_Control extends WP_Customize_Control {
-		public $type = 'donate';
 
-		public function render_content() {
-			?>
+require_once(ABSPATH.'/wp-includes/class-wp-customize-control.php');
+
+class CMW_Donate_Control extends WP_Customize_Control {
+	public $type = 'donate';
+	public function render_content() { ?>
+		<a href=# target='_blank'><img src='<?php echo get_stylesheet_directory_uri().'/images/donate.gif'; ?>'></a>
+		<a href="javascript:disable_enable()">Click here</a> <?php
+	}
+}
+
+
+class CMW_RSS_Control extends WP_Customize_Control {
+	public $type = 'donate';
+	public function render_content() { ?>
 		<table class=widefat cellspacing=5 >
 			<thead><tr><th valign=top ><?php _e( 'News', 'color-me-wp' ); ?></th></tr></thead>
 			<?php 
@@ -837,11 +836,9 @@ $i_s_functions = $options['iscroll_functions'];
 					} 
 				}
 			} else {$out = "<tr><td>Nothing to see here.</td></tr>";}
-		echo $out; ?>
+			echo $out; ?>
 			<tfoot><tr><th></th></tr></tfoot>
-		</table>
-			<?php
-		}
+		</table> <?php
 	}
-
+}
 ?>
