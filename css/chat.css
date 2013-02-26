@@ -1,0 +1,47 @@
+
+
+.chat-transcript li
+{
+	position: relative;
+	width: 75%;
+	font-size: 1.3em;
+	font-weight: bold;
+	padding: 7px 20px 7px 25px;
+	color: #555;
+	background-color: #eee;
+	list-style:none;
+	-webkit-box-shadow: 0px 2px 4px #888;
+	-moz-box-shadow: 0px 2px 4px #888;
+	box-shadow: 0px 2px 4px #222;
+	border-top: 0px !important;
+	border-bottom: 0px !important;
+	}
+
+.chat-transcript li:before, .chat-transcript li:after {
+	content: ' ';
+	position: absolute;
+	width: 0;
+	height: 0;
+	}
+
+/* wrap */
+ul.speakers-2 li.speaker-1 {
+	left: 0px;
+	top: 100%;
+	margin-top: 5px;
+	}
+ul.speakers-2 li.speaker-2 {
+	margin-right: 0px;
+	top: 100%;
+	margin-top: 5px;
+	}
+
+.tb-chat .chat-transcript .speaker-1 {background:blue;}
+.tb-chat .chat-transcript .speaker-2 {background:red;}
+.tb-chat .chat-transcript .speaker-3 {background:black;}
+.tb-chat .chat-transcript .speaker-4 {bavkground:green;}
+.tb-chat .chat-transcript .speaker-5 {}
+.tb-chat .chat-transcript .speaker-6 {}
+
+
+

@@ -11,7 +11,7 @@
 	<article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
 		<?php if ( is_sticky() && is_home() && ! is_paged() ) : ?>
 		<div class="featured-post">
-			<?php _e( 'Featured post', 'twentytwelve' ); ?>
+			<span class="featured-title"><?php _e( 'Featured post', 'twentytwelve' ); ?></span>
 		</div>
 		<?php endif; ?>
 		<header class="entry-header">
@@ -28,7 +28,7 @@
 			<?php if ( comments_open() ) : ?>
 
 			<!--comments_popup_link( $zero, $one, $more, $css_class, $none )-->
-			<div class=post_comments><span><?php comments_popup_link(); ?></span></div>
+			<div class=post_comments><span class="comments-link"><?php comments_popup_link(); ?></span></div>
 
 
 			<?php endif; // comments_open() ?>
@@ -42,7 +42,7 @@
 		</div><!-- .entry-summary -->
 		<?php else : ?>
 		<div class="entry-content">
-			<?php the_content( __( 'Continue reading <span class="meta-nav">&rarr;</span>', 'twentytwelve' ) ); ?>
+			<?php the_content( __( 'Continue reading', 'twentytwelve' ) ); ?>
 			<?php wp_link_pages( array( 'before' => '<div class="page-links">' . __( 'Pages:', 'twentytwelve' ), 'after' => '</div>' ) ); ?>
 		</div><!-- .entry-content -->
 		<?php endif; ?>
@@ -66,6 +66,6 @@
 					</div><!-- #author-description -->
 				</div><!-- #author-info -->
 			<?php endif; ?>
-		<div style="clear:both;"></div>
 		</footer><!-- .entry-meta -->
+		<div style="clear:both;"></div>
 	</article><!-- #post -->

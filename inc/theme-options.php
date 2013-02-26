@@ -547,7 +547,7 @@ class Color_Me_WP_Options {
 		$wp_customize->add_setting( $this->option_key . '[color_nav_link]', array(
 			'default'    => $defaults['color_nav_link'],
 			'type'       => 'option',
-			'transport'  => 'postMessage',
+			//'transport'  => 'postMessage',
 		) );
 
 		$wp_customize->add_control( new WP_Customize_Color_Control( $wp_customize, $this->option_key . '_color_nav_link', array(
@@ -575,7 +575,7 @@ class Color_Me_WP_Options {
 		$wp_customize->add_setting( $this->option_key . '[color_article_bg]', array(
 			'default'    => $defaults['color_article_bg'],
 			'type'       => 'option',
-			'transport'  => 'postMessage',
+			//'transport'  => 'postMessage',
 		) );
 
 		$wp_customize->add_control( new WP_Customize_Color_Control( $wp_customize, $this->option_key . '_color_article_bg', array(
@@ -589,7 +589,7 @@ class Color_Me_WP_Options {
 		$wp_customize->add_setting( $this->option_key . '[color_text]', array(
 			'default'    => $defaults['color_text'],
 			'type'       => 'option',
-			'transport'  => 'postMessage',
+			//'transport'  => 'postMessage',
 		) );
 
 		$wp_customize->add_control( new WP_Customize_Color_Control( $wp_customize, $this->option_key . '_color_text', array(
@@ -672,19 +672,31 @@ class Color_Me_WP_Options {
 
 		wp.customize( '<?php echo $this->option_key; ?>[color_nav_link]', function( value ) {
 			value.bind( function( to ) {
-				$('.main-navigation li a, a, .entry-header .entry-title a, .post_comments a, .post_tags a, .post_author a, .post_cats a, .post_date a, .edit-link a, .widget-area .widget a, .entry-meta a, footer[role="contentinfo"] a, .comments-area article header a time').css('color', to ? to : '' );
+				$('.main-navigation li a, a, .entry-header .entry-title a, .post_comments a, .post_tags a, .post_author a, .post_cats a, .post_date a, .edit-link a, .widget-area .widget a, .entry-meta a, footer[role="contentinfo"] a, .comments-area article header a time, #bit a.bsub').css('color', to ? to : '' );
+			});
+		});
+
+		wp.customize( '<?php echo $this->option_key; ?>[color_nav_link_hover]', function( value ) {
+			value.bind( function( to ) {
+				$('.main-navigation li a:hover,a:hover, .entry-header .entry-title a:hover, .post_comments a:hover, .post_tags a:hover, .post_author a:hover, .post_cats a:hover, .post_date a:hover, .edit-link a:hover, .widget-area .widget a:hover, .entry-meta a:hover, footer[role='contentinfo'] a:hover, .comments-area article header a time:hover, #bit a.bsub:hover').css('color', to ? to : '' );
 			});
 		});
 
 		wp.customize( '<?php echo $this->option_key; ?>[color_article_bg]', function( value ) {
 			value.bind( function( to ) {
-				$('.site-content article, article.comment, li.pingback p, li.trackback p, div#respond, .comments-title, .widget-area aside, footer[role="contentinfo"],.archive-header, .page-header, .author-info').css('background', to ? to : '' );
+				$('.site-content article, article.comment, li.pingback p, li.trackback p, div#respond, .comments-title, .widget-area aside, footer[role='contentinfo'],.archive-header, .page-header, .author-info, article.format-quote .entry-content blockquote').css('background', to ? to : '' );
 			});
 		});
 
 		wp.customize( '<?php echo $this->option_key; ?>[color_text]', function( value ) {
 			value.bind( function( to ) {
-				$('body, .entry-content, .archive-title, .page-title, .widget-title, .entry-content th, .comment-content th, footer.entry-meta, footer, .main-navigation .current-menu-item > a, .main-navigation .current-menu-ancestor > a, .main-navigation .current_page_item > a, .main-navigation .current_page_ancestor > a').css('color', to ? to : '' );
+				$('body, .entry-content, .archive-title, .page-title, .widget-title, .entry-content th, .comment-content th, footer.entry-meta, footer, .main-navigation .current-menu-item > a, .main-navigation .current-menu-ancestor > a, .main-navigation .current_page_item > a, .main-navigation .current_page_ancestor > a , .genericon:before, .menu-toggle:after, .featured-post:before, .date a:before, .entry-meta .author a:before, .format-audio .entry-content:before, .comments-link a:before, .tags-links a:first-child:before, .categories-links a:first-child:before, .edit-link a:before, .attachment .entry-title:before, .attachment-meta:before, .attachment-meta a:before, .comment-awaiting-moderation:before, .comment-reply-link:before, #reply-title small a:before, .bypostauthor .fn:before, .error404 .page-title:before, a.more-link:after ').css('color', to ? to : '' );
+			});
+		});
+
+		wp.customize( '<?php echo $this->option_key; ?>[color_nav_bottom]', function( value ) {
+			value.bind( function( to ) {
+				$('code, pre, ins, div.featured-post').css('background', to ? to : '' );
 			});
 		});
 
@@ -737,7 +749,7 @@ class Color_Me_WP_Options {
 	function cmw_feedback_link() { ?>
 		<script type="text/javascript">
 			var head  = document.getElementsByTagName("head")[0];
-			var link  = document.createElement("link");link.rel  = "stylesheet";link.type = "text/css";link.href = "http://feedback.landry.me/color-me-wp/public/themes/default/assets/css/widget.css";link.media = "all";head.appendChild(link);
+			var link  = document.createElement("link");link.rel  = "stylesheet";link.type = "text/css";link.href = "http:\/\/feedback.landry.me\/color-me-wp\/public\/themes\/default\/assets\/css\/widget.css";link.media = "all";head.appendChild(link);
 			var mystyle = document.createElement("style");mystyle.type = "text/css";
 			var mystyletxt = document.createTextNode(".l-ur-body{z-index:999999;}");mystyle.appendChild(mystyletxt);head.appendChild(mystyle);
 		</script>
@@ -799,8 +811,8 @@ require_once(ABSPATH.'/wp-includes/class-wp-customize-control.php');
 class CMW_Donate_Control extends WP_Customize_Control {
 	public $type = 'donate';
 	public function render_content() { ?>
-		<a href=# target='_blank'><img src='<?php echo get_stylesheet_directory_uri().'/images/donate.gif'; ?>'></a>
-		<a href="javascript:disable_enable()">Click here</a> <?php
+		<a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=DNWX23LBQJ5KE" target='_blank'><img src='<?php echo get_stylesheet_directory_uri().'/images/donate.gif'; ?>'></a>
+		<?php
 	}
 }
 
