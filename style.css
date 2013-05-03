@@ -115,7 +115,7 @@ footer[role="contentinfo"] {border-top:0px;margin-bottom: 5px;}
 
 body a{text-decoration:none;}
 
-.genericon:before, .menu-toggle:after, .featured-post:before, .date a:before, .entry-meta .author a:before, .format-audio .entry-content:before, .comments-link a:before, .tags-links a:first-child:before, .categories-links a:first-child:before, .edit-link a:before, .attachment .entry-title:before, .attachment-meta:before, .attachment-meta a:before, .comment-awaiting-moderation:before, .comment-reply-link:before, #reply-title small a:before, .bypostauthor .fn:before, .error404 .page-title:before, a.more-link:after, #image-navigation .next-image a:after, #image-navigation .previous-image a:before, .nav-next a, .nav-previous a, .widget-title:before, .entry-title:before, .featured-title:before, article.format-quote .entry-content blockquote p:before, article.format-quote footer.entry-meta a[rel="bookmark"]:before, article.format-image footer.entry-meta a h1:before, article.format-image footer.entry-meta time:before, article.format-link footer.entry-meta a[rel="bookmark"]:before, article.format-link .entry-content p:before, article.format-aside footer.entry-meta a[rel="bookmark"]:before, article.format-status .entry-header h1:before, article.format-status .entry-header h2:before, article.format-status .entry-content p:before, #bsub-text:before{-webkit-font-smoothing:antialiased;font:normal 24px/1 'Genericons';vertical-align:text-bottom;}
+.genericon:before, .menu-toggle:after, .featured-post:before, .date a:before, .entry-meta .author a:before, .format-audio .entry-content:before, .comments-link a:before, .tags-links a:first-child:before, .categories-links a:first-child:before, .edit-link a:before, .attachment .entry-title:before, .attachment-meta:before, .attachment-meta a:before, .comment-awaiting-moderation:before, .comment-reply-link:before, #reply-title small a:before, .bypostauthor .fn:before, .error404 .page-title:before, a.more-link:after, #image-navigation .next-image a:after, #image-navigation .previous-image a:before, .nav-next a, .nav-previous a, .widget-title:before, .entry-title:before, .featured-title:before, article.format-quote .entry-content blockquote p:before, article.format-quote footer.entry-meta a[rel="bookmark"]:before, article.format-image footer.entry-meta a h1:before, article.format-image footer.entry-meta time:before, article.format-link footer.entry-meta a[rel="bookmark"]:before, article.format-link .entry-content p:before, article.format-aside footer.entry-meta a[rel="bookmark"]:before, article.format-status .entry-header h1:before, article.format-status .entry-header h2:before, article.format-status .entry-content p:before, #bsub-text:before, .widget h3:before, article.type-page .entry-title:before{-webkit-font-smoothing:antialiased;font:normal 24px/1 'Genericons';vertical-align:text-bottom;}
 .entry-meta div {float: left;width: 50%;}
 .entry-meta .date a:before{content:'\f303';}
 .comments-link a:before{content:'\f300';margin-right:2px;top:-1px;position:relative;}
@@ -130,7 +130,7 @@ a.more-link, .next-image a, .previous-image a, .nav-next a, .nav-previous a{vert
 .nav-next a:after{content: '\f501'; margin-left:5px; vertical-align:middle;}
 .nav-previous a:before{content: '\f503'; margin-right:5px; vertical-align:middle;}
 .comment-reply-link:before { content: '\f412'; margin-right:5px; vertical-align:middle;}
-.widget_recent_entries h3:before{content: '\f100'; margin-right:5px;}
+.widget h3:before{content: '\f100'; margin-right:5px;}
 .widget_recent_comments h3:before{content: '\f108'; margin-right:5px;}
 .widget_archive h3:before{content: '\f307'; margin-right:5px;}
 .widget_categories h3:before{content: '\f301'; margin-right:5px;}
@@ -138,6 +138,7 @@ a.more-link, .next-image a, .previous-image a, .nav-next a, .nav-previous a{vert
 
 
 article.format-standard .entry-title:before{content: '\f100'; margin-right:5px;}
+article.type-page .entry-title:before{content: '\f100'; margin-right:5px;}
 article.format-image .entry-title:before{content: '\f102'; margin-right:5px;}
 article.format-gallery .entry-title:before{content: '\f103'; margin-right:5px;}
 article.format-video .entry-title:before{content: '\f104'; margin-right:5px;}
@@ -171,19 +172,18 @@ article.format-aside footer.entry-meta a[rel="bookmark"]:before{content: '\f303'
 article.format-chat .entry-title:before{content: '\f108'; margin-right:5px;}
 article.format-audio .entry-title:before{content: '\f109'; margin-right:5px;}
 
+.site {overflow:visible;}
 .featured-title:before { content: '\f308'; margin-right:5px;}
 /* left hang featured post */
 div.featured-post
 {
 	position: relative;
-	width: 102%;
 	font-size: 1.3em;
 	font-weight: bold;
-	padding: 7px 20px 7px 25px;
-	margin: 0 10px 25px -30px;
+	padding: 7px 15px 7px 15px;
+	margin: 0 -25px 25px -25px;
 	color: #555;
 	background-color: #eee;
-
 	-webkit-box-shadow: 0px 2px 4px #888;
 	-moz-box-shadow: 0px 2px 4px #888;
 	box-shadow: 0px 2px 4px #222;
@@ -205,16 +205,90 @@ div.featured-post:before {
 	border-width: 5px 5px;
 	border-style: solid;
 	border-color: #111 #111 transparent transparent;
-	margin-top: 5px;
 	}
 div.featured-post:after {
 	right: 0px;
 	top: 100%;
 	border-width: 5px 5px;
 	border-style: solid;
-border-color: #111 transparent transparent #111;
-	margin-top: 5px;
+	border-color: #111 transparent transparent #111;
 	}
+
+/* widget title */
+h3.widget-title
+{
+	position: relative;
+	padding: 7px 15px 7px 15px;
+	margin: 0 -25px 25px 0;
+	background-color: #eee;
+	-webkit-box-shadow: 0px 2px 4px #888;
+	-moz-box-shadow: 0px 2px 4px #888;
+	box-shadow: 0px 2px 4px #222;
+	border-top: 0px !important;
+	border-bottom: 0px !important;
+	}
+
+/*h3.widget-title:before,*/ h3.widget-title:after {
+	content: ' ';
+	position: absolute;
+	width: 0;
+	height: 0;
+	}
+
+/* wrap 
+h3.widget-title:before {
+	left: 0px;
+	top: 100%;
+	border-width: 5px 5px;
+	border-style: solid;
+	border-color: #111 #111 transparent transparent;
+	}*/
+h3.widget-title:after {
+	right: 0px;
+	top: 100%;
+	border-width: 5px 5px;
+	border-style: solid;
+border-color: #111 transparent transparent #111;
+	}
+
+/* Post title */
+.post header, article.page header
+{
+	position: relative;
+	padding: 7px 15px 7px 15px;
+	margin: 0 0 25px -25px;
+	background-color: #eee;
+	-webkit-box-shadow: 0px 2px 4px #888;
+	-moz-box-shadow: 0px 2px 4px #888;
+	box-shadow: 0px 2px 4px #222;
+	border-top: 0px !important;
+	border-bottom: 0px !important;
+	}
+
+.post header:before, article.page header:before /* , .post header:after */{
+	content: ' ';
+	position: absolute;
+	width: 0;
+	height: 0;
+	}
+
+/* wrap */
+.post header:before, article.page header:before {
+	left: 0px;
+	top: 100%;
+	border-width: 5px 5px;
+	border-style: solid;
+	border-color: #111 #111 transparent transparent;
+	}/*
+.post header:after {
+	right: 0px;
+	top: 100%;
+	border-width: 5px 5px;
+	border-style: solid;
+	border-color: #111 transparent transparent #111;
+	}*/
+
+
 /* Chat CSS */
 p.speaker-2 {background:#075698 !important;} /* blue */
 p.speaker-3 {background:#f3961c !important;} /* orange */
@@ -256,3 +330,5 @@ div.speakers-6 p.speaker-6 {margin-left:125px !important; margin-right:0px !impo
 .meta-nav{display:none;}
 .reply span{display:none;}
 pre{background-color:#000; -webkit-border-radius: 10px; -khtml-border-radius: 10px; -moz-border-radius: 10px; border-radius: 10px; border:0px !important;}
+
+.wpwhosonline-row{height:auto;}

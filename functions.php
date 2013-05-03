@@ -129,7 +129,7 @@ echo "
 <div id=\"bit\" class=\"\">
   <a class=\"bsub\" href=\"javascript:void(0)\"><span id='bsub-text'>Follow</span></a>
   <div id=\"bitsubscribe\">
-    <h3><label for=\"loggedout-follow-field\">Follow “".get_bloginfo('name')."”</label></h3>
+    <h3><label for=\"loggedout-follow-field\">Follow &ldquo;".get_bloginfo('name')."&rdquo;</label></h3>
   
     <form action=". $s2page ." method=\"post\" accept-charset=\"utf-8\" id=\"loggedout-follow\">
       <p>Get every new post on this blog delivered to your Inbox.</p>
@@ -166,7 +166,7 @@ echo "
 			background: ".$new_options['color_article_bg'].";
 		}
 		
-
+h3.widget-title, .post header, article.page header {background:".$new_options['color_nav_bottom']."}
 
 
 		a, .entry-header .entry-title a, .post_comments a, .post_tags a, .post_author a, .post_cats a, .post_date a, .edit-link a, .widget-area .widget a, .entry-meta a, footer[role='contentinfo'] a, .comments-area article header a time, #bit a.bsub, .format-status .entry-header header a {
@@ -191,7 +191,7 @@ echo "
 
 		}
 
-		body, .entry-content, .archive-title, .page-title, .widget-title, .entry-content th, .comment-content th, footer.entry-meta, footer, .main-navigation .current-menu-item > a, .main-navigation .current-menu-ancestor > a, .main-navigation .current_page_item > a, .main-navigation .current_page_ancestor > a , .genericon:before, .menu-toggle:after, .featured-post:before, .date a:before, .entry-meta .author a:before, .format-audio .entry-content:before, .comments-link a:before, .tags-links a:first-child:before, .categories-links a:first-child:before, .edit-link a:before, .attachment .entry-title:before, .attachment-meta:before, .attachment-meta a:before, .comment-awaiting-moderation:before, .comment-reply-link:before, #reply-title small a:before, .bypostauthor .fn:before, .error404 .page-title:before, a.more-link:after, article.format-link footer.entry-meta a[rel='bookmark']:before, article.format-image footer.entry-meta a h1:before, article.format-image footer.entry-meta time:before, article.sticky .featured-post, article.format-aside footer.entry-meta a[rel='bookmark']:before, article.format-quote footer.entry-meta a[rel='bookmark']:before {
+		body, .entry-content, .archive-title, .page-title, .widget-title, .entry-content th, .comment-content th, footer.entry-meta, footer, .main-navigation .current-menu-item > a, .main-navigation .current-menu-ancestor > a, .main-navigation .current_page_item > a, .main-navigation .current_page_ancestor > a , .genericon:before, .menu-toggle:after, .featured-post:before, .date a:before, .entry-meta .author a:before, .format-audio .entry-content:before, .comments-link a:before, .tags-links a:first-child:before, .categories-links a:first-child:before, .edit-link a:before, .attachment .entry-title:before, .attachment-meta:before, .attachment-meta a:before, .comment-awaiting-moderation:before, .comment-reply-link:before, #reply-title small a:before, .bypostauthor .fn:before, .error404 .page-title:before, a.more-link:after, article.format-link footer.entry-meta a[rel='bookmark']:before, article.format-image footer.entry-meta a h1:before, article.format-image footer.entry-meta time:before, article.sticky .featured-post, article.format-aside footer.entry-meta a[rel='bookmark']:before, article.format-quote footer.entry-meta a[rel='bookmark']:before .widget h3:before{
 
 			color: ".$new_options['color_text'].";
 		}
@@ -213,7 +213,7 @@ echo "
 
 			}
 
-		code, pre, ins, div.featured-post {background-color: ".$new_options['color_nav_bottom']."}
+		code, pre, ins, div.featured-post {background-color: ".$new_options['color_nav_top']."}
 	</style>";
 
 }
