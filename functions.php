@@ -105,7 +105,9 @@ function cmw_wp_head() {
 	global $color_me_wp_options;
 	$new_options = get_option( $color_me_wp_options->option_key );
 
-
+        $hashedEmail = md5(strtolower(trim(get_option('admin_email'))));
+        $icon = 'http://www.gravatar.com/avatar/' . $hashedEmail . '?s=16';
+        echo "<link rel='shortcut icon' href='$icon' />";
 
 echo "<script type=\"text/javascript\"> 
 $(document).ready(function(){
@@ -148,73 +150,6 @@ echo "
 </div>";
 }
 
-	echo "<style type='text/css'>
-		.main-navigation {
-			background: -webkit-gradient(linear, 0% 0%, 0% 100%, from(".$new_options['color_nav_bottom']."), to(".$new_options['color_nav_top']."));
-			background: -webkit-linear-gradient(top, ".$new_options['color_nav_top'].", ".$new_options['color_nav_bottom'].");
-			background: -moz-linear-gradient(top, ".$new_options['color_nav_top'].", ".$new_options['color_nav_bottom'].");
-			background: -ms-linear-gradient(top, ".$new_options['color_nav_top'].", ".$new_options['color_nav_bottom'].");
-			background: -o-linear-gradient(top, ".$new_options['color_nav_top'].", ".$new_options['color_nav_bottom'].");
-		}
-		.main-navigation li a {
-			color: ".$new_options['color_nav_link'].";
-		}
-		.main-navigation li a:hover {
-			color: ".$new_options['color_nav_link_hover'].";
-		}
-		.site-content article, article.comment, li.pingback p, li.trackback p, div#respond, .comments-title, .widget-area aside, footer[role='contentinfo'],.archive-header, .page-header, .author-info, article.format-quote .entry-content blockquote {
-			background: ".$new_options['color_article_bg'].";
-		}
-		
-h3.widget-title, .post header, article.page header {background:".$new_options['color_nav_bottom']."}
-
-
-		a, .entry-header .entry-title a, .post_comments a, .post_tags a, .post_author a, .post_cats a, .post_date a, .edit-link a, .widget-area .widget a, .entry-meta a, footer[role='contentinfo'] a, .comments-area article header a time, #bit a.bsub, .format-status .entry-header header a {
-
-			color: ".$new_options['color_nav_link'].";
-
-		}
-
-		a:hover, .entry-header .entry-title a:hover, .post_comments a:hover, .post_tags a:hover, .post_author a:hover, .post_cats a:hover, .post_date a:hover, .edit-link a:hover, .widget-area .widget a:hover, .entry-meta a:hover, footer[role='contentinfo'] a:hover, .comments-area article header a time:hover, #bit a.bsub:hover, .format-status .entry-header header a:hover {
-
-			color: ".$new_options['color_nav_link_hover'].";
-		}
-
-		hr.style-one {
-			background-image: -webkit-linear-gradient(left, ".$new_options['color_article_bg'].", #ccc, ".$new_options['color_article_bg']."); 
-
-			background-image:    -moz-linear-gradient(left, ".$new_options['color_article_bg'].", #ccc, ".$new_options['color_article_bg']."); 
-
-			background-image:     -ms-linear-gradient(left, ".$new_options['color_article_bg'].", #ccc, ".$new_options['color_article_bg']."); 
-
-			background-image:      -o-linear-gradient(left, ".$new_options['color_article_bg'].", #ccc, ".$new_options['color_article_bg']."); 
-
-		}
-
-		body, .entry-content, .archive-title, .page-title, .widget-title, .entry-content th, .comment-content th, footer.entry-meta, footer, .main-navigation .current-menu-item > a, .main-navigation .current-menu-ancestor > a, .main-navigation .current_page_item > a, .main-navigation .current_page_ancestor > a , .genericon:before, .menu-toggle:after, .featured-post:before, .date a:before, .entry-meta .author a:before, .format-audio .entry-content:before, .comments-link a:before, .tags-links a:first-child:before, .categories-links a:first-child:before, .edit-link a:before, .attachment .entry-title:before, .attachment-meta:before, .attachment-meta a:before, .comment-awaiting-moderation:before, .comment-reply-link:before, #reply-title small a:before, .bypostauthor .fn:before, .error404 .page-title:before, a.more-link:after, article.format-link footer.entry-meta a[rel='bookmark']:before, article.format-image footer.entry-meta a h1:before, article.format-image footer.entry-meta time:before, article.sticky .featured-post, article.format-aside footer.entry-meta a[rel='bookmark']:before, article.format-quote footer.entry-meta a[rel='bookmark']:before .widget h3:before{
-
-			color: ".$new_options['color_text'].";
-		}
-
-		input[type='submit'], .menu-toggle, .menu-toggle.toggled-on, input[type='submit'].toggled-on {
-			background: -webkit-gradient(linear, left top, left bottom, from(".$new_options['color_nav_link']."), to(".$new_options['color_nav_bottom']."));
-
-			background: -moz-linear-gradient(top, ".$new_options['color_nav_link'].", ".$new_options['color_nav_bottom'].");
-
-			filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='".$new_options['color_nav_link']."', endColorstr='".$new_options['color_nav_bottom']."')
-
-			}
-		input[type='submit']:hover, .menu-toggle:hover, article.post-password-required input[type='submit']:hover {
-
-			background: -webkit-gradient(linear, left top, left bottom, from(".$new_options['color_nav_link_hover']."), to(".$new_options['color_nav_bottom']."));
-
-			background: -moz-linear-gradient(top, ".$new_options['color_nav_link_hover'].", ".$new_options['color_nav_bottom'].");
-			filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='".$new_options['color_nav_link_hover']."', endColorstr='".$new_options['color_nav_bottom']."')
-
-			}
-
-		code, pre, ins, div.featured-post {background-color: ".$new_options['color_nav_top']."}
-	</style>";
 
 }
 add_action('wp_head', 'cmw_wp_head');
@@ -226,16 +161,14 @@ function color_me_wp_styles()
   // (First the unique name for the style (custom-style) then the src, 
   // then dependencies and ver no. and media type)
   wp_register_style( 'color-me-wp-style', 
-    get_stylesheet_directory_uri() . '/css/theme-options.css.php', 
+    get_stylesheet_directory_uri() . '/css/display.css.php', 
     array('twentytwelve-style'), 
     '20120208', 
     'all' );
+  wp_enqueue_style( 'color-me-wp-style' );
 
-  // enqueing:
-  //wp_enqueue_style( 'color-me-wp-style' );
 
-$plugin = 'subscribe2/subscribe2.php';
-if (is_plugin_active($plugin)) {
+if (is_plugin_active('subscribe2/subscribe2.php')) {
   wp_register_style( 'color-me-wp-s2-style', 
     get_stylesheet_directory_uri() . '/css/subscribe2.css', 
     array(), 
@@ -383,6 +316,3 @@ function tb_chat_css(){
 
 }
 add_action( 'wp_enqueue_scripts', 'tb_chat_css' ); // Add css stylesheet
-
-?>
-

@@ -33,21 +33,16 @@ class Color_Me_WP_Options {
 	 * @return Color_Me_WP_Options
 	 */
 	public function __construct() {
-		// Set option key based on get_stylesheet()
-		//if ( 'color_me_wp' != get_stylesheet() )
-		//	$this->option_key = get_stylesheet() . '_theme_options';
 
-		add_action( 'admin_init',		array( $this, 'options_init'		) );
-		//add_action( 'admin_menu',		array( $this, 'add_page'		) );
-		add_action( 'customize_register',	array( $this, 'customize_register'	) );
+        add_action( 'admin_init',           array( $this, 'options_init'        ) );
+		add_action( 'customize_register',	array( $this, 'customize_register'  ) );
+        add_action( 'wp_head' ,             array( $this, 'header_output'       ) );
+        add_action( 'wp_enqueue_scripts',   array( $this, 'cmw_theme_js'        ) );
+        //add_action( 'wp_enqueue_styles',    array( $this, 'enqueue_style'       ) );wp_dequeue_style( 'twentytwelve-fonts' );
 		add_action( 'customize_preview_init',	array( $this, 'customize_preview_js'	) );
-		add_action( 'admin_enqueue_scripts', 	array( $this, 'color_me_wp_admin_scripts') );
+		//add_action( 'customize_controls_print_styles', 	array( $this, 'color_me_wp_admin_styles') );
 
-		$options = get_option( $this->option_key );
-		if (!empty($options['enable_iscroll']) && $options['enable_iscroll'] == true) {
-			add_action('wp_enqueue_scripts', array( $this, 'cmw_theme_js' ) );
-			add_action( 'wp_footer', array( $this, 'cmw_infinite_scroll_style' ) );
-		}
+
 		$script = $_SERVER['SCRIPT_NAME'];
 
 		if (strpos($script, 'customize.php') !== false || strpos($script, 'themes.php') !== false) {
@@ -117,24 +112,113 @@ class Color_Me_WP_Options {
 
 	}
 
+
 	/**
-	 * Adds our theme options page to the admin menu.
-	 *
-	 * This function is attached to the admin_menu action hook.
+	 * Enqueues the Admin Scripts.
 	 *
 	 * @access public
 	 *
 	 * @return void
 	 */
-	public function add_page() {
-		$theme_page = add_theme_page(
-			__( 'Theme Options', 'color-me-wp' ), // Name of page
-			__( 'Theme Options', 'color-me-wp' ), // Label in menu
-			'edit_theme_options',                  // Capability required
-			'theme_options',                       // Menu slug, used to uniquely identify the page
-			array( $this, 'render_page' )          // Function that renders the options page
-		);
-	}
+
+    
+    public function header_output() {
+        $cmwpo = get_option( $this->option_key ); ?>
+<!--Customizer CSS--> 
+<style type="text/css">
+.main-navigation {
+	background: -webkit-gradient(linear, 0% 0%, 0% 100%, from( <?php echo $cmwpo['color_nav_bottom']; ?> ), to( <?php echo $cmwpo['color_nav_top']; ?> ) );
+	background: -webkit-linear-gradient(top, <?php echo $cmwpo['color_nav_top']; ?> , <?php echo $cmwpo['color_nav_bottom']; ?> );
+	background: -moz-linear-gradient(top, <?php echo $cmwpo['color_nav_top']; ?> , <?php echo $cmwpo['color_nav_bottom']; ?> );
+	background: -ms-linear-gradient(top, <?php echo $cmwpo['color_nav_top']; ?> , <?php echo $cmwpo['color_nav_bottom']; ?> );
+	background: -o-linear-gradient(top, <?php echo $cmwpo['color_nav_top']; ?> , <?php echo $cmwpo['color_nav_bottom']; ?> );
+}
+
+.main-navigation li a {	color: <?php echo $cmwpo['color_nav_link'] ?> ; }
+
+.main-navigation li a:hover { color: <?php echo $cmwpo['color_nav_link_hover']; ?> ; }
+
+.site-content article, article.comment, li.pingback p, li.trackback p, div#respond, 
+.comments-title, .widget-area aside, footer[role='contentinfo'],.archive-header, 
+.page-header, .author-info, article.format-quote .entry-content blockquote {
+	background: <?php echo $cmwpo['color_article_bg']; ?> ;
+}
+
+.site-content article, article.comment, li.pingback p, li.trackback p, div#respond, 
+.comments-title, .widget-area aside, footer[role='contentinfo'],.archive-header, 
+.page-header, .author-info, article.format-quote .entry-content blockquote {
+	background: <?php echo $cmwpo['color_article_bg']; ?> ;
+}
+		
+h3.widget-title, .post.format-standard header, .post.format-gallery header, 
+.post.format-chat header, .post.format-video header, .post.format-audio header, 
+article.page header {
+    background:<?php echo $cmwpo['color_nav_bottom']; ?> ;
+}
+
+a, .entry-header .entry-title a, .post_comments a, .post_tags a, .post_author a, 
+.post_cats a, .post_date a, .edit-link a, .widget-area .widget a, .entry-meta a, 
+footer[role='contentinfo'] a, .comments-area article header a time, #bit a.bsub, 
+.format-status .entry-header header a, .widget a:visited {
+	color: <?php echo $cmwpo['color_nav_link']; ?> !important;
+}
+
+a:hover, .entry-header .entry-title a:hover, .post_comments a:hover, 
+.post_tags a:hover, .post_author a:hover, .post_cats a:hover, .post_date a:hover, 
+.edit-link a:hover, .widget-area .widget a:hover, .entry-meta a:hover, 
+footer[role='contentinfo'] a:hover, .comments-area article header a time:hover, 
+#bit a.bsub:hover, .format-status .entry-header header a:hover {
+    color: <?php echo $cmwpo['color_nav_link_hover']; ?> !important;
+}
+
+hr.style-one {
+	background-image: -webkit-linear-gradient(left, <?php echo $cmwpo['color_article_bg'];?>, #ccc, <?php echo $cmwpo['color_article_bg'];?>); 
+	background-image:    -moz-linear-gradient(left, <?php echo $cmwpo['color_article_bg'];?>, #ccc, <?php echo $cmwpo['color_article_bg'];?>); 
+	background-image:     -ms-linear-gradient(left, <?php echo $cmwpo['color_article_bg'];?>, #ccc, <?php echo $cmwpo['color_article_bg'];?>); 
+	background-image:      -o-linear-gradient(left, <?php echo $cmwpo['color_article_bg'];?>, #ccc, <?php echo $cmwpo['color_article_bg'];?>); 
+}
+
+body, .entry-content, .archive-title, .page-title, .widget-title, .entry-content th, 
+.comment-content th, footer.entry-meta, footer, .main-navigation .current-menu-item > a, 
+.main-navigation .current-menu-ancestor > a, .main-navigation .current_page_item > a, 
+.main-navigation .current_page_ancestor > a , .genericon:before, .menu-toggle:after, 
+.featured-post:before, .date a:before, .entry-meta .author a:before, .format-audio 
+.entry-content:before, .comments-link a:before, .tags-links a:first-child:before, 
+.categories-links a:first-child:before, .edit-link a:before, .attachment .entry-title:before, 
+.attachment-meta:before, .attachment-meta a:before, .comment-awaiting-moderation:before, 
+.comment-reply-link:before, #reply-title small a:before, .bypostauthor .fn:before, 
+.error404 .page-title:before, a.more-link:after, 
+article.format-link footer.entry-meta a[rel='bookmark']:before, 
+article.format-image footer.entry-meta a h1:before, 
+article.format-image footer.entry-meta time:before, 
+article.sticky .featured-post, 
+article.format-aside footer.entry-meta a[rel='bookmark']:before, 
+article.format-quote footer.entry-meta a[rel='bookmark']:before .widget h3:before{
+	color: <?php echo $cmwpo['color_text'];?> ;
+}
+
+input[type='submit'], .menu-toggle, .menu-toggle.toggled-on, input[type='submit'].toggled-on {
+	background: -webkit-gradient(linear, left top, left bottom, from(<?php echo $cmwpo['color_nav_link'];?>), to(<?php echo $cmwpo['color_nav_bottom'];?>));
+	background: -moz-linear-gradient(top, <?php echo $cmwpo['color_nav_link'];?>, <?php echo $cmwpo['color_nav_bottom'];?>);
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='<?php echo $cmwpo['color_nav_link'];?>', endColorstr='<?php echo $cmwpo['color_nav_bottom'];?>');
+}
+
+input[type='submit']:hover, .menu-toggle:hover, article.post-password-required input[type='submit']:hover {
+	background: -webkit-gradient(linear, left top, left bottom, from(<?php echo $cmwpo['color_nav_link_hover'];?>), to(<?php echo $cmwpo['color_nav_bottom'];?>));
+	background: -moz-linear-gradient(top, <?php echo $cmwpo['color_nav_link_hover'];?>, <?php echo $cmwpo['color_nav_bottom'];?>);
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='<?php echo $cmwpo['color_nav_link_hover'];?>', endColorstr='<?php echo $cmwpo['color_nav_bottom'];?>');
+}
+
+code, pre, ins, div.featured-post {
+    background-color: <?php echo $cmwpo['color_nav_bottom'];?> ;
+}
+</style> 
+<!--/Customizer CSS--><?php
+
+		if (!empty($cmwpo['enable_iscroll']) && $cmwpo['enable_iscroll'] == true)
+			$this->cmw_infinite_scroll_style();
+    }
+
 
 	/**
 	 * Returns the default options.
@@ -158,6 +242,7 @@ class Color_Me_WP_Options {
 			'color_nav_link_hover' => '#64b7dd',
 			'color_article_bg' => '#111',
 			'color_text' => '#777',
+            'web_fonts' => array(),
 			// \Added
 		);
 		return apply_filters( 'color_me_wp_default_theme_options', $default_theme_options );
@@ -172,203 +257,6 @@ class Color_Me_WP_Options {
 	 */
 	public function get_theme_options() {
 		return get_option( $this->option_key, $this->get_default_theme_options() );
-	}
-
-	/**
-	 * Renders the enable fonts checkbox setting field.
-	 *
-	 * @access public
-	 *
-	 * @return void
-	 */
-	public function settings_field_enable_fonts() {
-		global $options_arr;
-		$options = $this->options;
-		?>
-		<label for="enable_fonts">
-			<input type="checkbox" name="<?php echo $this->option_key; ?>[enable_fonts]" id="enable_fonts" <?php checked( $options['enable_fonts'] ); ?> />
-			<?php _e( $options_arr['enable_fonts'], 'color-me-wp' );  ?>
-		</label>
-		<?php
-	}
-
-
-	/**
-	 * Renders the enable iscroll setting field.
-	 *
-	 * @access public
-	 *
-	 * @return void
-	 */
-	public function settings_field_enable_iscroll() {
-		global $options_arr;
-		$options = $this->options;
-		?>
-		<label for="enable_iscroll">
-			<input type="checkbox" name="<?php echo $this->option_key; ?>[enable_iscroll]" id="enable_iscroll" <?php checked( $options['enable_iscroll'] ); ?> />
-			<?php _e( $options_arr['enable_iscroll'], 'color-me-wp' );  ?>
-		</label>
-		<?php
-	}
-
-	public function settings_field_iscroll_text() {
-		global $options_arr;
-		$options = $this->options;
-		?>
-		<label for="iscroll_text">
-			<input type="text" name="<?php echo $this->option_key; ?>[iscroll_text]" id="iscroll_text" value="<?php echo $options['iscroll_text']; ?>" />
-		</label>
-		<?php
-	}
-
-	public function settings_field_iscroll_finish() {
-		global $options_arr;
-		$options = $this->options;
-		?>
-		<label for="iscroll_finish">
-			<input type="text" name="<?php echo $this->option_key; ?>[iscroll_finish]" id="iscroll_finish" value="<?php echo $options['iscroll_finish']; ?>" />
-		</label>
-		<?php
-	}
-
-	public function settings_field_iscroll_functions() {
-		global $options_arr;
-		$options = $this->options;
-		?>
-		<label for="iscroll_functions">
-			<input type="text" name="<?php echo $this->option_key; ?>[iscroll_functions]" id="iscroll_functions" value="<?php echo $options['iscroll_functions']; ?>" />
-		</label>
-		<?php
-	}
-
-	public function settings_field_color_nav_top() {
-		global $options_arr;
-		$options = $this->options;
-		?>
-		<label for="color_nav_top">
-			<input type="text" name="<?php echo $this->option_key; ?>[color_nav_top]" id="color_nav_top" value="<?php echo $options['color_nav_top']; ?>" />
-			<input type='button' class='pickcolor button-secondary' value='Select Color' >
-			<div id='colorpicker' style='z-index: 100; background: none repeat scroll 0% 0% rgb(238, 238, 238); border: 1px solid rgb(204, 204, 204); position: absolute;'></div>
-		</label>
-		<?php
-	}
-
-	public function settings_field_color_nav_bottom() {
-		global $options_arr;
-		$options = $this->options;
-		?>
-		<label for="color_nav_bottom">
-			<input type="text" name="<?php echo $this->option_key; ?>[color_nav_bottom]" id="color_nav_bottom" value="<?php echo $options['color_nav_bottom']; ?>" />
-			<input type='button' class='pickcolor button-secondary' value='Select Color' >
-			<div id='colorpicker' style='z-index: 100; background: none repeat scroll 0% 0% rgb(238, 238, 238); border: 1px solid rgb(204, 204, 204); position: absolute;'></div>
-		</label>
-		<?php
-	}
-
-	public function settings_field_color_nav_link() {
-		global $options_arr;
-		$options = $this->options;
-		?>
-		<label for="color_nav_link">
-			<input type="text" name="<?php echo $this->option_key; ?>[color_nav_link]" id="color_nav_link" value="<?php echo $options['color_nav_link']; ?>" />
-			<input type='button' class='pickcolor button-secondary' value='Select Color' >
-			<div id='colorpicker' style='z-index: 100; background: none repeat scroll 0% 0% rgb(238, 238, 238); border: 1px solid rgb(204, 204, 204); position: absolute;'></div>
-		</label>
-		<?php
-	}
-
-	public function settings_field_color_nav_link_hover() {
-		global $options_arr;
-		$options = $this->options;
-		?>
-		<label for="color_nav_link_hover">
-			<input type="text" name="<?php echo $this->option_key; ?>[color_nav_link_hover]" id="color_nav_link_hover" value="<?php echo $options['color_nav_link_hover']; ?>" />
-			<input type='button' class='pickcolor button-secondary' value='Select Color' >
-			<div id='colorpicker' style='z-index: 100; background: none repeat scroll 0% 0% rgb(238, 238, 238); border: 1px solid rgb(204, 204, 204); position: absolute;'></div>
-		</label>
-		<?php
-	}
-
-	public function settings_field_color_article_bg() {
-		global $options_arr;
-		$options = $this->options;
-		?>
-		<label for="color_article_bg">
-			<input type="text" name="<?php echo $this->option_key; ?>[color_article_bg]" id="color_article_bg" value="<?php echo $options['color_article_bg']; ?>" />
-			<input type='button' class='pickcolor button-secondary' value='Select Color' >
-			<div id='colorpicker' style='z-index: 100; background: none repeat scroll 0% 0% rgb(238, 238, 238); border: 1px solid rgb(204, 204, 204); position: absolute;'></div>
-		</label>
-		<?php
-	}
-
-	public function settings_field_color_text() {
-		global $options_arr;
-		$options = $this->options;
-		?>
-		<label for="color_text">
-			<input type="text" name="<?php echo $this->option_key; ?>[color_text]" id="color_text" value="<?php echo $options['color_text']; ?>" />
-			<input type='button' class='pickcolor button-secondary' value='Select Color' >
-			<div id='colorpicker' style='z-index: 100; background: none repeat scroll 0% 0% rgb(238, 238, 238); border: 1px solid rgb(204, 204, 204); position: absolute;'></div>
-		</label>
-		<?php
-	}
-
-
-
-	/**
-	 * Displays the theme options page.
-	 *
-	 * @uses get_current_theme() for back compat, fallback for < 3.4
-	 * @access public
-	 *
-	 * @return void
-	 */
-	public function render_page() {
-		?>
-		<div class="wrap">
-			<?php screen_icon(); ?>
-			<?php $theme_name = function_exists( 'wp_get_theme' ) ? wp_get_theme() : get_current_theme(); ?>
-			<h2><?php printf( __( '%s Theme Options', 'color-me-wp' ), $theme_name ); ?></h2>
-			<?php settings_errors(); ?>
-
-			<form method="post" action="options.php">
-				<?php
-					echo "<!--div style='float:left;'-->";
-					echo "<div class=wp-fill-overlay-sidebar-content>";
-					echo "<div class=customize-theme-controls>";
-					settings_fields( 'color_me_wp_options' );
-					do_settings_sections( 'theme_options' );
-					submit_button();
-					echo "</div>";
-					echo "</div>";
-					echo "<div id=customize-preview class=wp-full-overlay-main>";
-					echo "<iframe src='http://test.landry.me' width=500px height=500px></iframe>";
-					echo "</div>";
-				?>
-			</form>
-		</div>
-		<?php
-	}
-
-
-	/**
-	 * Enqueues the Admin Scripts.
-	 *
-	 * @access public
-	 *
-	 * @return void
-	 */
-	public function color_me_wp_admin_scripts() {
-		if (isset($_GET['page']) && $_GET['page'] == 'theme_options') {
-
-		wp_enqueue_style( 'farbtastic' );
-		//wp_enqueue_style( 'customize-controls' );
-		//wp_enqueue_script( 'customize-controls' );
-		//wp_enqueue_script( 'underscore' );
-		//wp_enqueue_script( 'backbone' );
-		//wp_enqueue_script( 'farbtastic' );
-		//wp_enqueue_script("color-me-wp-colorpick", get_stylesheet_directory_uri()."/js/colorpick.js", 'jquery', "1.0");
-		} else { return; }
 	}
 
 
@@ -412,16 +300,15 @@ class Color_Me_WP_Options {
 	 */
 
 	public function customize_register( $wp_customize ) {
-
-		// Enable Web Fonts
-		/*$wp_customize->add_section( $this->option_key . '_enable_fonts', array(
-			'title'    => __( 'Fonts', 'color-me-wp' ),
-			'priority' => 35,
-		) );*/
-
 		$defaults = $this->get_default_theme_options();
 
-		/*$wp_customize->add_setting( $this->option_key . '[enable_fonts]', array(
+		// Enable Web Fonts
+		$wp_customize->add_section( $this->option_key . '_enable_fonts', array(
+			'title'    => __( 'Fonts', 'color-me-wp' ),
+			'priority' => 35,
+		) );
+
+		$wp_customize->add_setting( $this->option_key . '[enable_fonts]', array(
 			'default'    => $defaults['enable_fonts'],
 			'type'       => 'option',
 			'transport'  => 'postMessage',
@@ -432,7 +319,7 @@ class Color_Me_WP_Options {
 			'section'  => $this->option_key . '_enable_fonts',
 			'settings' => $this->option_key . '[enable_fonts]',
 			'type'     => 'checkbox',
-		) );*/
+		) );
 
 		// Enable Infinite Scroll
 		$wp_customize->add_section( $this->option_key . '_enable_iscroll', array(
@@ -519,7 +406,7 @@ class Color_Me_WP_Options {
 		$wp_customize->add_setting( $this->option_key . '[color_nav_top]', array(
 			'default'    => $defaults['color_nav_top'],
 			'type'       => 'option',
-			'transport'  => 'refresh',
+			//'transport'  => 'refresh',
 		) );
 
 		$wp_customize->add_control( new WP_Customize_Color_Control( $wp_customize, $this->option_key . '_color_nav_top', array(
@@ -533,7 +420,7 @@ class Color_Me_WP_Options {
 		$wp_customize->add_setting( $this->option_key . '[color_nav_bottom]', array(
 			'default'    => $defaults['color_nav_bottom'],
 			'type'       => 'option',
-			'transport'  => 'refresh',
+			//'transport'  => 'refresh',
 		) );
 
 		$wp_customize->add_control( new WP_Customize_Color_Control( $wp_customize, $this->option_key . '_color_nav_bottom', array(
@@ -561,7 +448,7 @@ class Color_Me_WP_Options {
 		$wp_customize->add_setting( $this->option_key . '[color_nav_link_hover]', array(
 			'default'    => $defaults['color_nav_link_hover'],
 			'type'       => 'option',
-			'transport'  => 'refresh',
+			//'transport'  => 'postMessage',
 		) );
 
 		$wp_customize->add_control( new WP_Customize_Color_Control( $wp_customize, $this->option_key . '_color_nav_link_hover', array(
@@ -649,9 +536,9 @@ class Color_Me_WP_Options {
 	 * @return void
 	 */
 	public function customize_preview_js() {
-		wp_enqueue_script( 'color-me-wp-customizer', get_stylesheet_directory_uri() . '/js/theme-customizer.js', array( 'customize-preview' ), '20120802', true );
+		//wp_enqueue_script( 'color-me-wp-customizer', get_stylesheet_directory_uri() . '/js/theme-customizer.js', array( 'customize-preview' ), '20120802', true );
 		wp_localize_script( 'color-me-wp-customizer', 'color-me-wp_customizer', array(
-			'option_key' => $this->option_key,
+			'option_key' => $this->option_key . '[enable_fonts]',
 			'link'       => $this->custom_fonts_url(),
 		) );
 	}
@@ -733,8 +620,6 @@ class Color_Me_WP_Options {
 			wp_register_script( 'infinite_scroll',  get_stylesheet_directory_uri() . '/js/jquery.infinitescroll.min.js', array('jquery'),null,true );
 			wp_enqueue_script('infinite_scroll');
 		}
-		//wp_register_script( 'infinite_scroll_js',  get_stylesheet_directory_uri() . '/js/color-me-wp.iscroll.js.php', array('infinite_scroll'),null,true );
-		//wp_enqueue_script('infinite_scroll_js');
 	}
 
 
@@ -747,15 +632,23 @@ class Color_Me_WP_Options {
 	 * @return void
 	 */
 	function cmw_feedback_link() { ?>
-		<script type="text/javascript">
-			var head  = document.getElementsByTagName("head")[0];
-			var link  = document.createElement("link");link.rel  = "stylesheet";link.type = "text/css";link.href = "http:\/\/feedback.landry.me\/color-me-wp\/public\/themes\/default\/assets\/css\/widget.css";link.media = "all";head.appendChild(link);
+        <script type="text/javascript">
+            var head  = document.getElementsByTagName("head")[0];
+            var link  = document.createElement("link");
+                link.rel  = "stylesheet";
+                link.type = "text/css";
+                link.href = "http://feedback.landry.me/public/themes/default/assets/css/widget.css";
+                link.media = "all";head.appendChild(link);
 			var mystyle = document.createElement("style");mystyle.type = "text/css";
 			var mystyletxt = document.createTextNode(".l-ur-body{z-index:999999;}");mystyle.appendChild(mystyletxt);head.appendChild(mystyle);
-		</script>
-		<script type="text/javascript">widget = {url:'http://feedback.landry.me/color-me-wp/'}</script>
-		<script src="http://feedback.landry.me/color-me-wp/public/assets/modules/system/js/widget.js" type="text/javascript"></script>
-		<a class="widget-tab widget-tab-right w-round w-shadow" style="margin-top:-52px;background-color:#4F2D92;border-color:#FFF830;z-index: 999999;" title="Feedback" href="javascript:popup('widget', 'http://feedback.landry.me/color-me-wp/widget', 600, 400);"  ><img width="15" alt="" src="http://feedback.landry.me/color-me-wp/public/files/logo/widget-text-default.png" /></a><?php
+        </script>
+        <script type="text/javascript">widget = {url:'http://feedback.landry.me/'}</script>
+        <script src="http://feedback.landry.me/public/assets/modules/system/js/widget.js" type="text/javascript"></script>
+        <a class="widget-tab widget-tab-right w-round w-shadow" 
+            style="margin-top:-52px;background-color:#4F2D92;border-color:#FFF830;z-index: 999999;" 
+            title="Feedback" href="javascript:popup('widget', 'http://feedback.landry.me/widget', 600, 400);"  >
+            <img width="15" alt="" src="http://feedback.landry.me/public/files/logo/widget-text-default.png" />
+        </a> <?php
 	}
 
 	/**
@@ -853,4 +746,3 @@ class CMW_RSS_Control extends WP_Customize_Control {
 		</table> <?php
 	}
 }
-?>
